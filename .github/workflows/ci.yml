@@ -1,0 +1,71 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install compiler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends g++ make python3
+
+      - name: Portable build
+        run: make PORTABLE=1 -j"$(nproc)" all build/portable/checks
+
+      - name: Test suite
+        run: python3 tests/run_tests.py --build build/portable
+
+  sanitizers:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install compiler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends g++ make python3
+
+      - name: Build with AddressSanitizer and UndefinedBehaviorSanitizer
+        run: >
+          make PORTABLE=1 -j"$(nproc)"
+          build/portable/abtest build/portable/abtest-eq build/portable/checks
+          EXTRA_CXXFLAGS="-fsanitize=address,undefined -fno-sanitize-recover=undefined -fno-omit-frame-pointer -g"
+          EXTRA_LDFLAGS="-fsanitize=address,undefined"
+
+      - name: Quick suite under the sanitizers
+        env:
+          ASAN_OPTIONS: detect_leaks=0
+          UBSAN_OPTIONS: print_stacktrace=1
+        run: python3 tests/run_tests.py --build build/portable --quick
+
+  threads:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install clang and the LLVM OpenMP runtime
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends clang-18 libomp-18-dev make
+
+      # the sanitizer's shadow memory does not fit the address layout of newer kernels
+      - name: Lower the mmap randomisation
+        run: sudo sysctl vm.mmap_rnd_bits=28
+
+      - name: Build with ThreadSanitizer
+        run: >
+          make PORTABLE=1 -j"$(nproc)" build/portable/abtest
+          CXX=clang++-18
+          EXTRA_CXXFLAGS="-fsanitize=thread -g -O1"
+          EXTRA_LDFLAGS="-fsanitize=thread"
+
+      - name: Race check
+        env:
+          LD_LIBRARY_PATH: /usr/lib/llvm-18/lib
+        run: bash tests/race_check.sh build/portable

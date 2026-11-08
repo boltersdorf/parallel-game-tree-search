@@ -1,0 +1,27 @@
+run id:  C_races_20260830-233133_j5819573_i01r05c06s11
+results: ~/abalone/versions/4-ab-par/analysis/results/C_races_20260830-233133_j5819573_i01r05c06s11.out
+NOTE: No version specified. Loading version: intel/2025.3.0.
+=== i01r05c06s11, Intel(R) oneAPI DPC++/C++ Compiler 2025.3.0 (2025.3.0.20251010)
+flags: -O3 -fno-omit-frame-pointer -qopenmp -std=c++20 -I../5-ab-par-tt -fsanitize=thread -g
+built ~/abalone/versions/4-ab-par/analysis/bin/abtest-tsan
+available strategies:
+  AB Parallel
+  AB Par Ord
+  AB Par TT ID Asp
+  AB Par TT ID Asp Ord
+  AB Par TT ID Asp Ord YBW
+  AB Par TT ID
+  AB Par TT
+  AB Par YBW
+  AB Seq Oracle
+  Minmax Seq Oracle
+sanitizer warnings in total: 8
+
+=== every SUMMARY, this is where each race actually sits
+      8 SUMMARY: ThreadSanitizer: data race /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1919:16 in __kmp_lock_suspend_mx
+
+SUMMARY lines naming our own code: 0
+none, every race sits in the openmp runtime, which is not instrumented
+
+full log: ~/abalone/versions/4-ab-par/analysis/results/C_races_20260830-233133_j5819573_i01r05c06s11_tsan_raw.log
+=== session C done

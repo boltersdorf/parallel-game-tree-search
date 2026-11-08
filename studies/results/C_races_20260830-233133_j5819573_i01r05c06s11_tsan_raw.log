@@ -1,0 +1,1146 @@
+--- strategy=AB Parallel pos=start threads=4
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=003 mask=3,51
+AFFINITY tid=001 mask=1,49
+AB Parallel,start,3,4,0,66,A1/RightDown,0.301842,915,25562,0,17.328,760,155,T0=202:6886:0.298035,T1=251:6756:0.297616,T2=218:5948:0.286408,T3=244:5972:0.286169
+ROOTNODES,AB Parallel,start,3,4,0,737,816,866,731,393,894,552,85,133,133,109,85,127,93,581,353,143,142,1147,1093,1100,1243,1017,166,166,1021,117,109,1528,1220,1118,105,1106,160,1278,113,113,113,113,1347,160,1499,965,1387
+CUTOFFAT,AB Parallel,start,3,4,0,76,25,38,29,6,31,2,553
+AB Parallel,start,3,4,1,66,A1/RightDown,0.300526,915,25562,0,17.328,760,155,T0=202:6886:0.299409,T1=261:6771:0.297785,T2=252:5930:0.286828,T3=200:5975:0.284626
+ROOTNODES,AB Parallel,start,3,4,1,737,816,866,731,393,894,552,85,133,133,109,85,127,93,581,353,143,142,1147,1093,1100,1243,1017,166,166,1021,117,109,1528,1220,1118,105,1106,160,1278,113,113,113,113,1347,160,1499,965,1387
+CUTOFFAT,AB Parallel,start,3,4,1,76,25,38,29,6,31,2,553
+--- strategy=AB Parallel pos=start threads=16
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=004 mask=4,52
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=006 mask=6,54
+AFFINITY tid=003 mask=3,51
+AFFINITY tid=005 mask=5,53
+AFFINITY tid=007 mask=7,55
+AFFINITY tid=009 mask=9,57
+AFFINITY tid=008 mask=8,56
+AFFINITY tid=014 mask=14,62
+AFFINITY tid=015 mask=15,63
+AFFINITY tid=013 mask=13,61
+AFFINITY tid=001 mask=1,49
+AFFINITY tid=010 mask=10,58
+AFFINITY tid=012 mask=12,60
+AFFINITY tid=011 mask=11,59
+==================
+WARNING: ThreadSanitizer: data race (pid=3326712)
+  Atomic read of size 1 at 0x7ff7907eb640 by thread T8:
+    #0 pthread_mutex_lock /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1420:3 (abtest-tsan+0x43ed9b)
+    #1 __kmp_lock_suspend_mx /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1919:16 (libiomp5.so+0x153401)
+    #2 void __kmp_resume_template<kmp_flag_64<false, true>>(int, kmp_flag_64<false, true>*) /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:2132:3 (libiomp5.so+0x153401)
+    #3 AbPar::searchBestMove() (.extracted.10) ~/abalone/versions/4-ab-par/search-ab-par.cpp (abtest-tsan+0x5019bd)
+    #4 __kmp_invoke_microtask <null> (libiomp5.so+0x14fdc8)
+    #5 AbPar::searchBestMove() ~/abalone/versions/4-ab-par/search-ab-par.cpp:114:5 (abtest-tsan+0x50033e)
+
+  Previous write of size 1 at 0x7ff7907eb640 by thread T11:
+    #0 pthread_mutex_init /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1394:3 (abtest-tsan+0x43ea50)
+    #1 __kmp_suspend_initialize_thread /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1886:14 (libiomp5.so+0x152820)
+    #2 AbPar::searchBestMove() (.extracted.10) ~/abalone/versions/4-ab-par/search-ab-par.cpp (abtest-tsan+0x5019bd)
+    #3 __kmp_invoke_microtask <null> (libiomp5.so+0x14fdc8)
+    #4 AbPar::searchBestMove() ~/abalone/versions/4-ab-par/search-ab-par.cpp:114:5 (abtest-tsan+0x50033e)
+
+  Thread T8 'openmp_worker' (tid=3326721, running) created by main thread at:
+    #0 pthread_create /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1090:3 (abtest-tsan+0x43d22e)
+    #1 __kmp_create_worker /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1015:7 (libiomp5.so+0x1508e5)
+    #2 SearchStrategy::bestMove(Board*) ~/abalone/versions/4-ab-par/search.cpp:266:5 (abtest-tsan+0x528527)
+    #3 main ~/abalone/versions/4-ab-par/abtest.cpp:91:26 (abtest-tsan+0x4eedfc)
+
+  Thread T11 'openmp_worker' (tid=3326724, running) created by main thread at:
+    #0 pthread_create /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1090:3 (abtest-tsan+0x43d22e)
+    #1 __kmp_create_worker /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1015:7 (libiomp5.so+0x1508e5)
+    #2 SearchStrategy::bestMove(Board*) ~/abalone/versions/4-ab-par/search.cpp:266:5 (abtest-tsan+0x528527)
+    #3 main ~/abalone/versions/4-ab-par/abtest.cpp:91:26 (abtest-tsan+0x4eedfc)
+
+SUMMARY: ThreadSanitizer: data race /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1919:16 in __kmp_lock_suspend_mx
+==================
+AB Parallel,start,3,16,0,66,A1/RightDown,0.619569,1740,43532,0,21.507,1530,210,T0=77:2275:0.368208,T1=94:2170:0.354559,T2=135:3962:0.437627,T3=122:3271:0.430249,T4=81:2167:0.351544,T5=135:2853:0.414572,T6=90:2334:0.373132,T7=90:2909:0.417043,T8=135:3566:0.433818,T9=109:2304:0.369760,T10=90:2492:0.386397,T11=109:2846:0.412217,T12=135:2396:0.385617,T13=122:3279:0.430274,T14=94:2177:0.350133,T15=122:2531:0.392063
+ROOTNODES,AB Parallel,start,3,16,0,737,816,866,731,528,894,741,704,557,537,743,643,961,403,788,576,980,988,1545,1452,1498,1687,1407,717,891,1370,1061,1213,2105,1621,1552,955,1480,1128,1767,1106,169,169,169,1911,1255,1499,965,1387
+CUTOFFAT,AB Parallel,start,3,16,0,228,38,36,48,25,78,6,1071
+AB Parallel,start,3,16,1,66,A1/RightDown,0.436971,1740,43532,0,21.507,1530,210,T0=77:2275:0.368921,T1=81:2167:0.351110,T2=135:2853:0.409612,T3=94:2170:0.353760,T4=90:2334:0.370483,T5=135:3924:0.436390,T6=135:3566:0.432784,T7=122:2531:0.393558,T8=109:2874:0.410539,T9=122:3279:0.428528,T10=122:3291:0.428088,T11=94:2177:0.353492,T12=109:2294:0.371338,T13=90:2909:0.414732,T14=135:2465:0.383042,T15=90:2423:0.383276
+ROOTNODES,AB Parallel,start,3,16,1,737,816,866,731,528,894,741,704,557,537,743,643,961,403,788,576,980,988,1545,1452,1498,1687,1407,717,891,1370,1061,1213,2105,1621,1552,955,1480,1128,1767,1106,169,169,169,1911,1255,1499,965,1387
+CUTOFFAT,AB Parallel,start,3,16,1,228,38,36,48,25,78,6,1071
+ThreadSanitizer: reported 1 warnings
+--- strategy=AB Parallel pos=start threads=48
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=004 mask=4,52
+AFFINITY tid=019 mask=19,67
+AFFINITY tid=016 mask=16,64
+AFFINITY tid=020 mask=20,68
+AFFINITY tid=014 mask=14,62
+AFFINITY tid=018 mask=18,66
+AFFINITY tid=012 mask=12,60
+AFFINITY tid=046 mask=46,94
+AFFINITY tid=008 mask=8,56
+AFFINITY tid=022 mask=22,70
+AFFINITY tid=006 mask=6,54
+AFFINITY tid=013 mask=13,61
+AFFINITY tid=047 mask=47,95
+AFFINITY tid=017 mask=17,65
+AFFINITY tid=015 mask=15,63
+AFFINITY tid=040 mask=40,88
+AFFINITY tid=045 mask=45,93
+AFFINITY tid=032 mask=32,80
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=001 mask=1,49
+AFFINITY tid=024 mask=24,72
+AFFINITY tid=010 mask=10,58
+AFFINITY tid=009 mask=9,57
+AFFINITY tid=007 mask=7,55
+AFFINITY tid=034 mask=34,82
+AFFINITY tid=005 mask=5,53
+AFFINITY tid=027 mask=27,75
+AFFINITY tid=026 mask=26,74
+AFFINITY tid=044 mask=44,92
+AFFINITY tid=039 mask=39,87
+AFFINITY tid=038 mask=38,86
+AFFINITY tid=028 mask=28,76
+AFFINITY tid=042 mask=42,90
+AFFINITY tid=003 mask=3,51
+AFFINITY tid=025 mask=25,73
+AFFINITY tid=023 mask=23,71
+AFFINITY tid=011 mask=11,59
+AFFINITY tid=031 mask=31,79
+AFFINITY tid=041 mask=41,89
+AFFINITY tid=030 mask=30,78
+AFFINITY tid=021 mask=21,69
+AFFINITY tid=029 mask=29,77
+AFFINITY tid=033 mask=33,81
+AFFINITY tid=043 mask=43,91
+AFFINITY tid=037 mask=37,85
+AFFINITY tid=035 mask=35,83
+AFFINITY tid=036 mask=36,84
+==================
+WARNING: ThreadSanitizer: data race (pid=3326730)
+  Atomic read of size 1 at 0x7f8148f68640 by thread T40:
+    #0 pthread_mutex_lock /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1420:3 (abtest-tsan+0x43ed9b)
+    #1 __kmp_lock_suspend_mx /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1919:16 (libiomp5.so+0x153401)
+    #2 void __kmp_resume_template<kmp_flag_64<false, true>>(int, kmp_flag_64<false, true>*) /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:2132:3 (libiomp5.so+0x153401)
+    #3 AbPar::searchBestMove() (.extracted.10) ~/abalone/versions/4-ab-par/search-ab-par.cpp (abtest-tsan+0x5019bd)
+    #4 __kmp_invoke_microtask <null> (libiomp5.so+0x14fdc8)
+    #5 AbPar::searchBestMove() ~/abalone/versions/4-ab-par/search-ab-par.cpp:114:5 (abtest-tsan+0x50033e)
+
+  Previous write of size 1 at 0x7f8148f68640 by thread T42:
+    #0 pthread_mutex_init /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1394:3 (abtest-tsan+0x43ea50)
+    #1 __kmp_suspend_initialize_thread /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1886:14 (libiomp5.so+0x152820)
+    #2 AbPar::searchBestMove() (.extracted.10) ~/abalone/versions/4-ab-par/search-ab-par.cpp (abtest-tsan+0x5019bd)
+    #3 __kmp_invoke_microtask <null> (libiomp5.so+0x14fdc8)
+    #4 AbPar::searchBestMove() ~/abalone/versions/4-ab-par/search-ab-par.cpp:114:5 (abtest-tsan+0x50033e)
+
+  Thread T40 'openmp_worker' (tid=3326771, running) created by main thread at:
+    #0 pthread_create /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1090:3 (abtest-tsan+0x43d22e)
+    #1 __kmp_create_worker /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1015:7 (libiomp5.so+0x1508e5)
+    #2 SearchStrategy::bestMove(Board*) ~/abalone/versions/4-ab-par/search.cpp:266:5 (abtest-tsan+0x528527)
+    #3 main ~/abalone/versions/4-ab-par/abtest.cpp:91:26 (abtest-tsan+0x4eedfc)
+
+  Thread T42 'openmp_worker' (tid=3326773, running) created by main thread at:
+    #0 pthread_create /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1090:3 (abtest-tsan+0x43d22e)
+    #1 __kmp_create_worker /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1015:7 (libiomp5.so+0x1508e5)
+    #2 SearchStrategy::bestMove(Board*) ~/abalone/versions/4-ab-par/search.cpp:266:5 (abtest-tsan+0x528527)
+    #3 main ~/abalone/versions/4-ab-par/abtest.cpp:91:26 (abtest-tsan+0x4eedfc)
+
+SUMMARY: ThreadSanitizer: data race /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1919:16 in __kmp_lock_suspend_mx
+==================
+AB Parallel,start,3,48,0,66,A1/RightDown,0.778669,1980,49186,0,24.307,1755,225,T0=0:0:0.000000,T1=45:512:0.270024,T2=45:659:0.325021,T3=45:1500:0.467843,T4=45:771:0.350351,T5=0:0:0.000000,T6=45:943:0.393731,T7=45:1722:0.480951,T8=45:492:0.260558,T9=45:916:0.387084,T10=45:598:0.303116,T11=45:935:0.393935,T12=45:1435:0.463309,T13=45:672:0.326822,T14=45:692:0.329618,T15=45:849:0.374353,T16=45:821:0.367750,T17=45:483:0.255389,T18=45:1362:0.453847,T19=45:698:0.336063,T20=45:531:0.275693,T21=45:1342:0.454406,T22=45:686:0.333543,T23=45:1451:0.465390,T24=45:1453:0.577501,T25=45:743:0.464563,T26=45:1507:0.582121,T27=45:953:0.506098,T28=45:1165:0.538367,T29=45:1400:0.571909,T30=45:1275:0.556214,T31=45:1576:0.585227,T32=45:358:0.257220,T33=45:1505:0.580583,T34=45:803:0.477034,T35=0:0:0.000000,T36=0:0:0.000000,T37=45:1325:0.561336,T38=45:1454:0.576780,T39=45:1642:0.587877,T40=45:2060:0.593746,T41=45:1407:0.572805,T42=45:1355:0.567109,T43=45:1638:0.588069,T44=45:1696:0.588737,T45=45:1239:0.551789,T46=45:1866:0.590731,T47=45:696:0.441369
+ROOTNODES,AB Parallel,start,3,48,0,737,816,866,731,528,894,741,704,557,537,743,643,961,403,788,576,980,988,1545,1452,1498,1687,1407,998,1210,1370,1445,1683,2105,1621,1552,1284,1480,1550,1767,1496,848,717,1400,1911,1741,1499,1320,1387
+CUTOFFAT,AB Parallel,start,3,48,0,272,43,36,48,25,85,6,1240
+AB Parallel,start,3,48,1,66,A1/RightDown,0.608144,1980,49186,0,24.307,1755,225,T0=0:0:0.000000,T1=45:849:0.385760,T2=45:692:0.335437,T3=45:1400:0.482447,T4=45:598:0.311112,T5=45:696:0.343417,T6=45:659:0.332788,T7=45:483:0.261027,T8=45:512:0.272077,T9=45:821:0.377833,T10=45:743:0.358994,T11=45:686:0.349109,T12=45:771:0.360249,T13=45:1454:0.491267,T14=0:0:0.000000,T15=45:2060:0.529064,T16=45:492:0.262824,T17=45:1355:0.477235,T18=45:1239:0.458445,T19=45:1342:0.480123,T20=45:672:0.336820,T21=45:1642:0.506592,T22=45:935:0.400585,T23=45:1435:0.492502,T24=45:358:0.254481,T25=45:803:0.480941,T26=45:1866:0.604255,T27=45:1453:0.592756,T28=45:1696:0.602152,T29=45:1275:0.573539,T30=0:0:0.000000,T31=45:531:0.349815,T32=0:0:0.000000,T33=45:1722:0.602967,T34=45:1505:0.595089,T35=45:1507:0.597948,T36=45:1407:0.587301,T37=45:1500:0.594840,T38=45:1451:0.590874,T39=45:1325:0.577865,T40=45:916:0.520847,T41=45:1638:0.601681,T42=45:953:0.526682,T43=45:1165:0.556663,T44=45:943:0.530138,T45=45:1362:0.584055,T46=45:698:0.435571,T47=45:1576:0.599639
+ROOTNODES,AB Parallel,start,3,48,1,737,816,866,731,528,894,741,704,557,537,743,643,961,403,788,576,980,988,1545,1452,1498,1687,1407,998,1210,1370,1445,1683,2105,1621,1552,1284,1480,1550,1767,1496,848,717,1400,1911,1741,1499,1320,1387
+CUTOFFAT,AB Parallel,start,3,48,1,272,43,36,48,25,85,6,1240
+ThreadSanitizer: reported 1 warnings
+--- strategy=AB Parallel pos=position-midgame1 threads=4
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=003 mask=3,51
+AFFINITY tid=001 mask=1,49
+AB Parallel,position-midgame1,3,4,0,-163,F3-G4/Left,0.474595,1472,41026,0,24.065,1204,268,T0=430:10492:0.470045,T1=375:9855:0.458801,T2=358:9992:0.454946,T3=309:10687:0.467302
+ROOTNODES,AB Parallel,position-midgame1,3,4,0,399,493,509,612,432,566,311,318,336,602,453,527,232,283,570,628,590,302,581,543,545,613,329,543,611,636,512,420,673,485,329,331,363,480,516,480,594,641,651,393,616,599,547,583,607,677,528,606,622,603,604,614,645,351,598,625,602,649,449,1019,1766,1356,1153,446,424,470,359,1282,1430,1128,1108
+CUTOFFAT,AB Parallel,position-midgame1,3,4,0,559,28,1,26,43,13,17,517
+AB Parallel,position-midgame1,3,4,1,-163,F3-G4/Left,0.476404,1472,41026,0,24.065,1204,268,T0=430:10492:0.475865,T1=367:9890:0.463362,T2=380:10713:0.471593,T3=295:9931:0.463462
+ROOTNODES,AB Parallel,position-midgame1,3,4,1,399,493,509,612,432,566,311,318,336,602,453,527,232,283,570,628,590,302,581,543,545,613,329,543,611,636,512,420,673,485,329,331,363,480,516,480,594,641,651,393,616,599,547,583,607,677,528,606,622,603,604,614,645,351,598,625,602,649,449,1019,1766,1356,1153,446,424,470,359,1282,1430,1128,1108
+CUTOFFAT,AB Parallel,position-midgame1,3,4,1,559,28,1,26,43,13,17,517
+--- strategy=AB Parallel pos=position-midgame1 threads=16
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=004 mask=4,52
+AFFINITY tid=006 mask=6,54
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=008 mask=8,56
+AFFINITY tid=007 mask=7,55
+AFFINITY tid=005 mask=5,53
+AFFINITY tid=003 mask=3,51
+AFFINITY tid=015 mask=15,63
+AFFINITY tid=012 mask=12,60
+AFFINITY tid=014 mask=14,62
+AFFINITY tid=013 mask=13,61
+AFFINITY tid=001 mask=1,49
+AFFINITY tid=009 mask=9,57
+AFFINITY tid=010 mask=10,58
+AFFINITY tid=011 mask=11,59
+==================
+WARNING: ThreadSanitizer: data race (pid=3326787)
+  Atomic read of size 1 at 0x7fe94bbf8640 by thread T12:
+    #0 pthread_mutex_lock /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1420:3 (abtest-tsan+0x43ed9b)
+    #1 __kmp_lock_suspend_mx /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1919:16 (libiomp5.so+0x153401)
+    #2 void __kmp_resume_template<kmp_flag_64<false, true>>(int, kmp_flag_64<false, true>*) /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:2132:3 (libiomp5.so+0x153401)
+    #3 AbPar::searchBestMove() (.extracted.10) ~/abalone/versions/4-ab-par/search-ab-par.cpp (abtest-tsan+0x5019bd)
+    #4 __kmp_invoke_microtask <null> (libiomp5.so+0x14fdc8)
+    #5 AbPar::searchBestMove() ~/abalone/versions/4-ab-par/search-ab-par.cpp:114:5 (abtest-tsan+0x50033e)
+
+  Previous write of size 1 at 0x7fe94bbf8640 by thread T14:
+    #0 pthread_mutex_init /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1394:3 (abtest-tsan+0x43ea50)
+    #1 __kmp_suspend_initialize_thread /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1886:14 (libiomp5.so+0x152820)
+    #2 AbPar::searchBestMove() (.extracted.10) ~/abalone/versions/4-ab-par/search-ab-par.cpp (abtest-tsan+0x5019bd)
+    #3 __kmp_invoke_microtask <null> (libiomp5.so+0x14fdc8)
+    #4 AbPar::searchBestMove() ~/abalone/versions/4-ab-par/search-ab-par.cpp:114:5 (abtest-tsan+0x50033e)
+
+  Thread T12 'openmp_worker' (tid=3326800, running) created by main thread at:
+    #0 pthread_create /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1090:3 (abtest-tsan+0x43d22e)
+    #1 __kmp_create_worker /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1015:7 (libiomp5.so+0x1508e5)
+    #2 SearchStrategy::bestMove(Board*) ~/abalone/versions/4-ab-par/search.cpp:266:5 (abtest-tsan+0x528527)
+    #3 main ~/abalone/versions/4-ab-par/abtest.cpp:91:26 (abtest-tsan+0x4eedfc)
+
+  Thread T14 'openmp_worker' (tid=3326802, running) created by main thread at:
+    #0 pthread_create /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1090:3 (abtest-tsan+0x43d22e)
+    #1 __kmp_create_worker /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1015:7 (libiomp5.so+0x1508e5)
+    #2 SearchStrategy::bestMove(Board*) ~/abalone/versions/4-ab-par/search.cpp:266:5 (abtest-tsan+0x528527)
+    #3 main ~/abalone/versions/4-ab-par/abtest.cpp:91:26 (abtest-tsan+0x4eedfc)
+
+SUMMARY: ThreadSanitizer: data race /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1919:16 in __kmp_lock_suspend_mx
+==================
+AB Parallel,position-midgame1,3,16,0,-163,F3-G4/Left,0.600999,2564,44123,0,18.131,2277,287,T0=167:2069:0.355977,T1=116:2216:0.362084,T2=121:2250:0.351581,T3=264:3045:0.424900,T4=201:3251:0.431403,T5=132:2425:0.380875,T6=196:2346:0.377908,T7=125:2126:0.353076,T8=134:2413:0.375256,T9=196:3838:0.440116,T10=127:2324:0.371460,T11=118:2259:0.362147,T12=123:2302:0.372876,T13=194:3072:0.422907,T14=141:3572:0.435508,T15=209:4615:0.451385
+ROOTNODES,AB Parallel,position-midgame1,3,16,0,399,493,509,762,432,566,465,472,480,746,597,671,370,427,716,628,590,302,581,543,545,613,329,543,611,636,512,420,673,485,329,469,507,480,516,480,594,641,651,393,616,599,547,583,607,677,528,606,622,603,604,614,645,351,598,625,602,649,449,1424,1766,1356,1424,446,424,470,359,1906,2575,1128,1108
+CUTOFFAT,AB Parallel,position-midgame1,3,16,0,1532,56,2,56,57,14,17,543
+AB Parallel,position-midgame1,3,16,1,-163,F3-G4/Left,0.451249,2564,44123,0,18.131,2277,287,T0=167:2069:0.355914,T1=203:3088:0.423596,T2=206:3312:0.428246,T3=190:3072:0.421909,T4=196:2346:0.376534,T5=132:2425:0.380052,T6=196:3838:0.441510,T7=127:2324:0.373700,T8=121:2234:0.351984,T9=209:4622:0.450552,T10=118:2259:0.359146,T11=116:2115:0.347096,T12=215:3506:0.437650,T13=129:2361:0.375105,T14=116:2349:0.367609,T15=123:2203:0.361802
+ROOTNODES,AB Parallel,position-midgame1,3,16,1,399,493,509,762,432,566,465,472,480,746,597,671,370,427,716,628,590,302,581,543,545,613,329,543,611,636,512,420,673,485,329,469,507,480,516,480,594,641,651,393,616,599,547,583,607,677,528,606,622,603,604,614,645,351,598,625,602,649,449,1424,1766,1356,1424,446,424,470,359,1906,2575,1128,1108
+CUTOFFAT,AB Parallel,position-midgame1,3,16,1,1532,56,2,56,57,14,17,543
+ThreadSanitizer: reported 1 warnings
+--- strategy=AB Parallel pos=position-midgame1 threads=48
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=016 mask=16,64
+AFFINITY tid=019 mask=19,67
+AFFINITY tid=015 mask=15,63
+AFFINITY tid=014 mask=14,62
+AFFINITY tid=018 mask=18,66
+AFFINITY tid=017 mask=17,65
+AFFINITY tid=013 mask=13,61
+AFFINITY tid=047 mask=47,95
+AFFINITY tid=006 mask=6,54
+AFFINITY tid=022 mask=22,70
+AFFINITY tid=046 mask=46,94
+AFFINITY tid=028 mask=28,76
+AFFINITY tid=027 mask=27,75
+AFFINITY tid=045 mask=45,93
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=020 mask=20,68
+AFFINITY tid=039 mask=39,87
+AFFINITY tid=032 mask=32,80
+AFFINITY tid=029 mask=29,77
+AFFINITY tid=012 mask=12,60
+AFFINITY tid=043 mask=43,91
+AFFINITY tid=035 mask=35,83
+AFFINITY tid=040 mask=40,88
+AFFINITY tid=007 mask=7,55
+AFFINITY tid=011 mask=11,59
+AFFINITY tid=041 mask=41,89
+AFFINITY tid=003 mask=3,51
+AFFINITY tid=009 mask=9,57
+AFFINITY tid=025 mask=25,73
+AFFINITY tid=026 mask=26,74
+AFFINITY tid=024 mask=24,72
+AFFINITY tid=001 mask=1,49
+AFFINITY tid=037 mask=37,85
+AFFINITY tid=030 mask=30,78
+AFFINITY tid=033 mask=33,81
+AFFINITY tid=031 mask=31,79
+AFFINITY tid=005 mask=5,53
+AFFINITY tid=044 mask=44,92
+AFFINITY tid=036 mask=36,84
+AFFINITY tid=004 mask=4,52
+AFFINITY tid=038 mask=38,86
+AFFINITY tid=034 mask=34,82
+AFFINITY tid=042 mask=42,90
+AFFINITY tid=008 mask=8,56
+AFFINITY tid=010 mask=10,58
+AFFINITY tid=021 mask=21,69
+AFFINITY tid=023 mask=23,71
+==================
+WARNING: ThreadSanitizer: data race (pid=3326805)
+  Atomic read of size 1 at 0x7f824481b640 by thread T20:
+    #0 pthread_mutex_lock /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1420:3 (abtest-tsan+0x43ed9b)
+    #1 __kmp_lock_suspend_mx /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1919:16 (libiomp5.so+0x153401)
+    #2 void __kmp_resume_template<kmp_flag_64<false, true>>(int, kmp_flag_64<false, true>*) /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:2132:3 (libiomp5.so+0x153401)
+    #3 AbPar::searchBestMove() (.extracted.10) ~/abalone/versions/4-ab-par/search-ab-par.cpp (abtest-tsan+0x5019bd)
+    #4 __kmp_invoke_microtask <null> (libiomp5.so+0x14fdc8)
+    #5 AbPar::searchBestMove() ~/abalone/versions/4-ab-par/search-ab-par.cpp:114:5 (abtest-tsan+0x50033e)
+
+  Previous write of size 1 at 0x7f824481b640 by thread T23:
+    #0 pthread_mutex_init /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1394:3 (abtest-tsan+0x43ea50)
+    #1 __kmp_suspend_initialize_thread /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1886:14 (libiomp5.so+0x152820)
+    #2 AbPar::searchBestMove() (.extracted.10) ~/abalone/versions/4-ab-par/search-ab-par.cpp (abtest-tsan+0x5019bd)
+    #3 __kmp_invoke_microtask <null> (libiomp5.so+0x14fdc8)
+    #4 AbPar::searchBestMove() ~/abalone/versions/4-ab-par/search-ab-par.cpp:114:5 (abtest-tsan+0x50033e)
+
+  Thread T20 'openmp_worker' (tid=3326826, running) created by main thread at:
+    #0 pthread_create /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1090:3 (abtest-tsan+0x43d22e)
+    #1 __kmp_create_worker /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1015:7 (libiomp5.so+0x1508e5)
+    #2 SearchStrategy::bestMove(Board*) ~/abalone/versions/4-ab-par/search.cpp:266:5 (abtest-tsan+0x528527)
+    #3 main ~/abalone/versions/4-ab-par/abtest.cpp:91:26 (abtest-tsan+0x4eedfc)
+
+  Thread T23 'openmp_worker' (tid=3326829, running) created by main thread at:
+    #0 pthread_create /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1090:3 (abtest-tsan+0x43d22e)
+    #1 __kmp_create_worker /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1015:7 (libiomp5.so+0x1508e5)
+    #2 SearchStrategy::bestMove(Board*) ~/abalone/versions/4-ab-par/search.cpp:266:5 (abtest-tsan+0x528527)
+    #3 main ~/abalone/versions/4-ab-par/abtest.cpp:91:26 (abtest-tsan+0x4eedfc)
+
+SUMMARY: ThreadSanitizer: data race /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1919:16 in __kmp_lock_suspend_mx
+==================
+AB Parallel,position-midgame1,3,48,0,-163,F3-G4/Left,0.795086,4836,46419,0,19.905,4518,318,T0=83:1025:0.480285,T1=85:670:0.366627,T2=86:741:0.389309,T3=85:679:0.368302,T4=171:1652:0.547069,T5=170:2427:0.584171,T6=101:967:0.474165,T7=83:663:0.364542,T8=84:687:0.375541,T9=95:1037:0.479529,T10=167:1883:0.560712,T11=87:676:0.372795,T12=88:985:0.473676,T13=95:955:0.468603,T14=99:1008:0.478260,T15=94:1119:0.491699,T16=84:735:0.393263,T17=166:834:0.448244,T18=90:931:0.453680,T19=94:1031:0.483488,T20=88:888:0.450178,T21=170:3079:0.588783,T22=175:1815:0.562714,T23=86:705:0.380661,T24=85:657:0.427540,T25=94:859:0.481769,T26=84:645:0.425437,T27=85:631:0.415468,T28=83:514:0.365291,T29=96:954:0.493266,T30=85:689:0.436946,T31=84:713:0.442468,T32=83:588:0.405951,T33=95:803:0.467486,T34=84:661:0.429601,T35=179:1649:0.567659,T36=90:830:0.471278,T37=119:2120:0.583490,T38=85:644:0.421291,T39=83:573:0.390423,T40=85:608:0.405142,T41=84:609:0.413948,T42=83:546:0.380234,T43=94:958:0.492365,T44=86:712:0.446895,T45=91:939:0.489619,T46=88:674:0.441356,T47=85:651:0.429186
+ROOTNODES,AB Parallel,position-midgame1,3,48,0,399,493,509,762,432,566,465,472,480,746,597,671,370,427,716,774,736,448,729,691,693,771,471,695,763,798,656,564,819,629,473,469,507,626,662,626,742,791,797,539,764,745,693,729,755,827,674,606,622,603,604,614,645,491,598,625,602,649,449,1424,1766,1356,1424,446,424,470,359,1906,2575,1128,1108
+CUTOFFAT,AB Parallel,position-midgame1,3,48,0,3802,56,2,56,57,14,15,516
+AB Parallel,position-midgame1,3,48,1,-163,F3-G4/Left,0.592668,4836,46419,0,19.905,4518,318,T0=83:1025:0.462963,T1=84:687:0.354752,T2=90:915:0.424602,T3=91:963:0.439817,T4=86:705:0.357274,T5=98:1067:0.467817,T6=101:975:0.455086,T7=170:2465:0.573173,T8=166:818:0.417348,T9=88:674:0.344181,T10=120:2308:0.562305,T11=101:1067:0.471379,T12=99:1008:0.457295,T13=101:967:0.452612,T14=88:995:0.453920,T15=95:1025:0.462208,T16=94:1031:0.462546,T17=83:663:0.344192,T18=95:957:0.447115,T19=169:1695:0.534299,T20=84:645:0.340324,T21=96:1021:0.460880,T22=168:1885:0.545712,T23=86:712:0.363867,T24=84:542:0.410576,T25=85:670:0.463162,T26=96:801:0.492421,T27=83:573:0.424030,T28=88:907:0.506527,T29=85:606:0.440261,T30=166:1731:0.575474,T31=83:514:0.393264,T32=169:2913:0.589380,T33=86:741:0.476071,T34=94:982:0.515970,T35=84:661:0.464682,T36=85:689:0.468894,T37=84:735:0.479900,T38=85:657:0.461824,T39=85:631:0.447989,T40=83:588:0.435290,T41=83:481:0.377657,T42=84:713:0.474375,T43=85:679:0.465167,T44=87:676:0.470699,T45=84:542:0.411222,T46=84:455:0.367741,T47=168:1659:0.575397
+ROOTNODES,AB Parallel,position-midgame1,3,48,1,399,493,509,762,432,566,465,472,480,746,597,671,370,427,716,774,736,448,729,691,693,771,471,695,763,798,656,564,819,629,473,469,507,626,662,626,742,791,797,539,764,745,693,729,755,827,674,606,622,603,604,614,645,491,598,625,602,649,449,1424,1766,1356,1424,446,424,470,359,1906,2575,1128,1108
+CUTOFFAT,AB Parallel,position-midgame1,3,48,1,3802,56,2,56,57,14,15,516
+ThreadSanitizer: reported 1 warnings
+--- strategy=AB Parallel pos=position-endgame threads=4
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=003 mask=3,51
+AFFINITY tid=001 mask=1,49
+AB Parallel,position-endgame,3,4,0,-6420,I7/LeftUp/Push,0.056119,819,6528,0,11.200,703,116,T0=175:1840:0.052792,T1=213:1508:0.050866,T2=214:1560:0.051016,T3=217:1620:0.051474
+ROOTNODES,AB Parallel,position-endgame,3,4,0,240,256,270,261,279,294,87,81,75,89,83,590,326,656,89,84,89,82,83,89,85,83,85,85,73,81,83,75,83,89,75,81,83,85,83,407,573,631,87,84,233
+CUTOFFAT,AB Parallel,position-endgame,3,4,0,551,33,7,0,10,30,1,71
+AB Parallel,position-endgame,3,4,1,-6420,I7/LeftUp/Push,0.061388,819,6528,0,11.200,703,116,T0=175:1840:0.060369,T1=217:1492:0.057598,T2=210:1556:0.057733,T3=217:1640:0.058279
+ROOTNODES,AB Parallel,position-endgame,3,4,1,240,256,270,261,279,294,87,81,75,89,83,590,326,656,89,84,89,82,83,89,85,83,85,85,73,81,83,75,83,89,75,81,83,85,83,407,573,631,87,84,233
+CUTOFFAT,AB Parallel,position-endgame,3,4,1,551,33,7,0,10,30,1,71
+--- strategy=AB Parallel pos=position-endgame threads=16
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=004 mask=4,52
+AFFINITY tid=013 mask=13,61
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=006 mask=6,54
+AFFINITY tid=010 mask=10,58
+AFFINITY tid=008 mask=8,56
+AFFINITY tid=003 mask=3,51
+AFFINITY tid=007 mask=7,55
+AFFINITY tid=005 mask=5,53
+AFFINITY tid=001 mask=1,49
+AFFINITY tid=012 mask=12,60
+AFFINITY tid=011 mask=11,59
+AFFINITY tid=014 mask=14,62
+AFFINITY tid=015 mask=15,63
+AFFINITY tid=009 mask=9,57
+AB Parallel,position-endgame,3,16,0,-6420,I7/LeftUp/Push,0.079987,1530,7455,0,12.410,1397,133,T0=78:326:0.052256,T1=109:659:0.067972,T2=84:343:0.054705,T3=84:365:0.055291,T4=122:922:0.071045,T5=76:337:0.054087,T6=84:354:0.055717,T7=82:344:0.055046,T8=112:838:0.069897,T9=155:321:0.054930,T10=84:347:0.055219,T11=72:652:0.067026,T12=79:589:0.065380,T13=150:324:0.055857,T14=81:348:0.054920,T15=78:386:0.056788
+ROOTNODES,AB Parallel,position-endgame,3,16,0,240,256,270,261,279,294,272,249,257,280,263,668,464,724,239,234,237,82,83,89,85,83,85,85,73,81,83,75,83,89,75,81,83,85,83,407,573,631,87,84,233
+CUTOFFAT,AB Parallel,position-endgame,3,16,0,1256,25,7,0,10,30,1,68
+AB Parallel,position-endgame,3,16,1,-6420,I7/LeftUp/Push,0.062586,1530,7455,0,12.410,1397,133,T0=78:326:0.046193,T1=150:324:0.048960,T2=83:339:0.047152,T3=85:353:0.048504,T4=79:589:0.057683,T5=112:838:0.061629,T6=84:341:0.048270,T7=82:358:0.048980,T8=155:321:0.048550,T9=123:926:0.062456,T10=78:386:0.050133,T11=72:652:0.059031,T12=76:351:0.048223,T13=84:350:0.048163,T14=108:659:0.059942,T15=81:342:0.046843
+ROOTNODES,AB Parallel,position-endgame,3,16,1,240,256,270,261,279,294,272,249,257,280,263,668,464,724,239,234,237,82,83,89,85,83,85,85,73,81,83,75,83,89,75,81,83,85,83,407,573,631,87,84,233
+CUTOFFAT,AB Parallel,position-endgame,3,16,1,1256,25,7,0,10,30,1,68
+--- strategy=AB Parallel pos=position-endgame threads=48
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=018 mask=18,66
+AFFINITY tid=004 mask=4,52
+AFFINITY tid=019 mask=19,67
+AFFINITY tid=020 mask=20,68
+AFFINITY tid=016 mask=16,64
+AFFINITY tid=014 mask=14,62
+AFFINITY tid=012 mask=12,60
+AFFINITY tid=001 mask=1,49
+AFFINITY tid=033 mask=33,81
+AFFINITY tid=017 mask=17,65
+AFFINITY tid=022 mask=22,70
+AFFINITY tid=046 mask=46,94
+AFFINITY tid=045 mask=45,93
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=013 mask=13,61
+AFFINITY tid=015 mask=15,63
+AFFINITY tid=047 mask=47,95
+AFFINITY tid=029 mask=29,77
+AFFINITY tid=008 mask=8,56
+AFFINITY tid=009 mask=9,57
+AFFINITY tid=031 mask=31,79
+AFFINITY tid=040 mask=40,88
+AFFINITY tid=038 mask=38,86
+AFFINITY tid=007 mask=7,55
+AFFINITY tid=010 mask=10,58
+AFFINITY tid=044 mask=44,92
+AFFINITY tid=006 mask=6,54
+AFFINITY tid=042 mask=42,90
+AFFINITY tid=003 mask=3,51
+AFFINITY tid=036 mask=36,84
+AFFINITY tid=041 mask=41,89
+AFFINITY tid=035 mask=35,83
+AFFINITY tid=043 mask=43,91
+AFFINITY tid=028 mask=28,76
+AFFINITY tid=005 mask=5,53
+AFFINITY tid=011 mask=11,59
+AFFINITY tid=039 mask=39,87
+AFFINITY tid=027 mask=27,75
+AFFINITY tid=030 mask=30,78
+AFFINITY tid=021 mask=21,69
+AFFINITY tid=032 mask=32,80
+AFFINITY tid=024 mask=24,72
+AFFINITY tid=034 mask=34,82
+AFFINITY tid=025 mask=25,73
+AFFINITY tid=026 mask=26,74
+AFFINITY tid=023 mask=23,71
+AFFINITY tid=037 mask=37,85
+AB Parallel,position-endgame,3,48,0,-6420,I7/LeftUp/Push,0.144167,3125,9892,0,17.979,2947,178,T0=0:0:0.000000,T1=78:201:0.081051,T2=79:589:0.112923,T3=75:199:0.080046,T4=72:161:0.072753,T5=75:189:0.078560,T6=78:161:0.073838,T7=72:652:0.113997,T8=78:386:0.099401,T9=75:465:0.104060,T10=0:0:0.000000,T11=78:180:0.076222,T12=78:192:0.077927,T13=78:216:0.082905,T14=0:0:0.000000,T15=78:179:0.078201,T16=76:192:0.078883,T17=77:160:0.072878,T18=78:183:0.077498,T19=72:168:0.070265,T20=77:179:0.074369,T21=0:0:0.000000,T22=75:188:0.078361,T23=0:0:0.000000,T24=83:206:0.110938,T25=72:170:0.104497,T26=78:194:0.109347,T27=77:190:0.108036,T28=76:629:0.116166,T29=76:187:0.108094,T30=75:197:0.108859,T31=78:156:0.099931,T32=77:190:0.108446,T33=79:201:0.111008,T34=71:621:0.115985,T35=76:192:0.108170,T36=76:186:0.106504,T37=76:190:0.108601,T38=77:226:0.112112,T39=77:179:0.105189,T40=77:191:0.108508,T41=77:189:0.108542,T42=76:190:0.107929,T43=0:0:0.000000,T44=76:193:0.108393,T45=0:0:0.000000,T46=76:196:0.108783,T47=70:179:0.105835
+ROOTNODES,AB Parallel,position-endgame,3,48,0,240,256,270,261,279,294,272,249,257,280,263,668,464,724,239,234,237,266,268,289,268,303,272,268,242,262,267,258,267,272,256,263,266,269,266,540,692,705,274,264,233
+CUTOFFAT,AB Parallel,position-endgame,3,48,0,2828,5,7,0,10,30,1,66
+AB Parallel,position-endgame,3,48,1,-6420,I7/LeftUp/Push,0.100932,3125,9892,0,17.979,2947,178,T0=0:0:0.000000,T1=78:179:0.058675,T2=77:190:0.061113,T3=77:179:0.055932,T4=76:193:0.060649,T5=75:465:0.085639,T6=78:156:0.055044,T7=0:0:0.000000,T8=76:629:0.094662,T9=72:170:0.056776,T10=77:160:0.053249,T11=0:0:0.000000,T12=76:187:0.059850,T13=76:190:0.060499,T14=78:183:0.057417,T15=71:621:0.094101,T16=72:652:0.096478,T17=83:206:0.062850,T18=78:201:0.062146,T19=75:188:0.060087,T20=75:199:0.061485,T21=0:0:0.000000,T22=0:0:0.000000,T23=72:168:0.052044,T24=78:161:0.083554,T25=76:192:0.091412,T26=77:189:0.091245,T27=76:192:0.091805,T28=0:0:0.000000,T29=77:191:0.091814,T30=78:386:0.098011,T31=77:179:0.087788,T32=78:194:0.091854,T33=78:216:0.094509,T34=72:161:0.083961,T35=76:196:0.091292,T36=76:190:0.090418,T37=77:190:0.091006,T38=0:0:0.000000,T39=70:179:0.088193,T40=77:226:0.095024,T41=76:186:0.089847,T42=78:192:0.090164,T43=75:189:0.090651,T44=78:180:0.088646,T45=79:589:0.100046,T46=79:201:0.093436,T47=75:197:0.092038
+ROOTNODES,AB Parallel,position-endgame,3,48,1,240,256,270,261,279,294,272,249,257,280,263,668,464,724,239,234,237,266,268,289,268,303,272,268,242,262,267,258,267,272,256,263,266,269,266,540,692,705,274,264,233
+CUTOFFAT,AB Parallel,position-endgame,3,48,1,2828,5,7,0,10,30,1,66
+--- strategy=AB Par TT pos=start threads=4
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=001 mask=1,49
+AFFINITY tid=003 mask=3,51
+AB Par TT,start,3,4,0,66,A1/RightDown,1.293834,915,25562,0,17.328,760,155,T0=202:6886:0.309155,T1=229:5768:0.292603,T2=223:6137:0.297337,T3=261:6771:0.307578
+ROOTNODES,AB Par TT,start,3,4,0,737,816,866,731,393,894,552,85,133,133,109,85,127,93,581,353,143,142,1147,1093,1100,1243,1017,166,166,1021,117,109,1528,1220,1118,105,1106,160,1278,113,113,113,113,1347,160,1499,965,1387
+CUTOFFAT,AB Par TT,start,3,4,0,76,25,38,29,6,31,2,553
+TTSTATS,AB Par TT,start,3,4,0,915,0,0,915,915,0,0,0,0
+AB Par TT,start,3,4,1,66,A1/RightDown,0.444023,915,25562,0,17.328,760,155,T0=202:6886:0.309347,T1=229:5768:0.292944,T2=223:6137:0.296957,T3=261:6771:0.307460
+ROOTNODES,AB Par TT,start,3,4,1,737,816,866,731,393,894,552,85,133,133,109,85,127,93,581,353,143,142,1147,1093,1100,1243,1017,166,166,1021,117,109,1528,1220,1118,105,1106,160,1278,113,113,113,113,1347,160,1499,965,1387
+CUTOFFAT,AB Par TT,start,3,4,1,76,25,38,29,6,31,2,553
+TTSTATS,AB Par TT,start,3,4,1,915,0,0,915,915,0,0,0,0
+--- strategy=AB Par TT pos=start threads=16
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=004 mask=4,52
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=008 mask=8,56
+AFFINITY tid=005 mask=5,53
+AFFINITY tid=007 mask=7,55
+AFFINITY tid=003 mask=3,51
+AFFINITY tid=009 mask=9,57
+AFFINITY tid=006 mask=6,54
+AFFINITY tid=014 mask=14,62
+AFFINITY tid=015 mask=15,63
+AFFINITY tid=013 mask=13,61
+AFFINITY tid=001 mask=1,49
+AFFINITY tid=012 mask=12,60
+AFFINITY tid=011 mask=11,59
+AFFINITY tid=010 mask=10,58
+==================
+WARNING: ThreadSanitizer: data race (pid=3326931)
+  Atomic read of size 1 at 0x7f23ca7e8640 by thread T8:
+    #0 pthread_mutex_lock /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1420:3 (abtest-tsan+0x43ed9b)
+    #1 __kmp_lock_suspend_mx /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1919:16 (libiomp5.so+0x153401)
+    #2 void __kmp_resume_template<kmp_flag_64<false, true>>(int, kmp_flag_64<false, true>*) /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:2132:3 (libiomp5.so+0x153401)
+    #3 AbParTTNew::rootSplit(Board&, std::vector<Move, std::allocator<Move>>&, std::vector<int, std::allocator<int>>&, std::vector<long, std::allocator<long>>*, int, unsigned long, int, std::vector<(anonymous namespace)::TTSlotStat, std::allocator<(anonymous namespace)::TTSlotStat>>&) (.extracted.14) ~/abalone/versions/4-ab-par/../5-ab-par-tt/search-ab-par-tt.cpp (abtest-tsan+0x521bae)
+    #4 __kmp_invoke_microtask <null> (libiomp5.so+0x14fdc8)
+    #5 AbParTTNew::rootSplit(Board&, std::vector<Move, std::allocator<Move>>&, std::vector<int, std::allocator<int>>&, std::vector<long, std::allocator<long>>*, int, unsigned long, int, std::vector<(anonymous namespace)::TTSlotStat, std::allocator<(anonymous namespace)::TTSlotStat>>&) ~/abalone/versions/4-ab-par/../5-ab-par-tt/search-ab-par-tt.cpp:205:5 (abtest-tsan+0x51fb8d)
+    #6 AbParTTNew::searchBestMove() ~/abalone/versions/4-ab-par/../5-ab-par-tt/search-ab-par-tt.cpp:303:5 (abtest-tsan+0x51fb8d)
+
+  Previous write of size 1 at 0x7f23ca7e8640 by thread T10:
+    #0 pthread_mutex_init /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1394:3 (abtest-tsan+0x43ea50)
+    #1 __kmp_suspend_initialize_thread /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1886:14 (libiomp5.so+0x152820)
+    #2 AbParTTNew::rootSplit(Board&, std::vector<Move, std::allocator<Move>>&, std::vector<int, std::allocator<int>>&, std::vector<long, std::allocator<long>>*, int, unsigned long, int, std::vector<(anonymous namespace)::TTSlotStat, std::allocator<(anonymous namespace)::TTSlotStat>>&) (.extracted.14) ~/abalone/versions/4-ab-par/../5-ab-par-tt/search-ab-par-tt.cpp (abtest-tsan+0x521bae)
+    #3 __kmp_invoke_microtask <null> (libiomp5.so+0x14fdc8)
+    #4 AbParTTNew::rootSplit(Board&, std::vector<Move, std::allocator<Move>>&, std::vector<int, std::allocator<int>>&, std::vector<long, std::allocator<long>>*, int, unsigned long, int, std::vector<(anonymous namespace)::TTSlotStat, std::allocator<(anonymous namespace)::TTSlotStat>>&) ~/abalone/versions/4-ab-par/../5-ab-par-tt/search-ab-par-tt.cpp:205:5 (abtest-tsan+0x51fb8d)
+    #5 AbParTTNew::searchBestMove() ~/abalone/versions/4-ab-par/../5-ab-par-tt/search-ab-par-tt.cpp:303:5 (abtest-tsan+0x51fb8d)
+
+  Thread T8 'openmp_worker' (tid=3326940, running) created by main thread at:
+    #0 pthread_create /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1090:3 (abtest-tsan+0x43d22e)
+    #1 __kmp_create_worker /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1015:7 (libiomp5.so+0x1508e5)
+    #2 SearchStrategy::bestMove(Board*) ~/abalone/versions/4-ab-par/search.cpp:266:5 (abtest-tsan+0x528527)
+    #3 main ~/abalone/versions/4-ab-par/abtest.cpp:91:26 (abtest-tsan+0x4eedfc)
+
+  Thread T10 'openmp_worker' (tid=3326942, running) created by main thread at:
+    #0 pthread_create /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1090:3 (abtest-tsan+0x43d22e)
+    #1 __kmp_create_worker /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1015:7 (libiomp5.so+0x1508e5)
+    #2 SearchStrategy::bestMove(Board*) ~/abalone/versions/4-ab-par/search.cpp:266:5 (abtest-tsan+0x528527)
+    #3 main ~/abalone/versions/4-ab-par/abtest.cpp:91:26 (abtest-tsan+0x4eedfc)
+
+SUMMARY: ThreadSanitizer: data race /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1919:16 in __kmp_lock_suspend_mx
+==================
+AB Par TT,start,3,16,0,66,A1/RightDown,1.815752,1740,43532,0,21.507,1530,210,T0=77:2275:0.353573,T1=90:2909:0.396994,T2=109:2874:0.393618,T3=94:2170:0.339130,T4=109:2300:0.355145,T5=122:2531:0.377301,T6=94:2177:0.333745,T7=135:3566:0.416500,T8=135:3934:0.419375,T9=90:2338:0.352753,T10=90:2423:0.368148,T11=122:3271:0.411954,T12=81:2167:0.333758,T13=135:2465:0.368487,T14=135:2853:0.393679,T15=122:3279:0.412454
+ROOTNODES,AB Par TT,start,3,16,0,737,816,866,731,528,894,741,704,557,537,743,643,961,403,788,576,980,988,1545,1452,1498,1687,1407,717,891,1370,1061,1213,2105,1621,1552,955,1480,1128,1767,1106,169,169,169,1911,1255,1499,965,1387
+CUTOFFAT,AB Par TT,start,3,16,0,228,38,36,48,25,78,6,1071
+TTSTATS,AB Par TT,start,3,16,0,1740,0,0,1740,1740,0,0,0,0
+AB Par TT,start,3,16,1,66,A1/RightDown,0.808084,1740,43532,0,21.507,1530,210,T0=77:2275:0.353272,T1=109:2306:0.352022,T2=94:2170:0.333205,T3=94:2177:0.338338,T4=122:3277:0.414643,T5=122:2531:0.377144,T6=135:3914:0.422207,T7=109:2874:0.396988,T8=135:3566:0.417426,T9=90:2334:0.353390,T10=90:2423:0.366980,T11=90:2909:0.399058,T12=122:3291:0.413546,T13=81:2167:0.333036,T14=135:2465:0.364847,T15=135:2853:0.399413
+ROOTNODES,AB Par TT,start,3,16,1,737,816,866,731,528,894,741,704,557,537,743,643,961,403,788,576,980,988,1545,1452,1498,1687,1407,717,891,1370,1061,1213,2105,1621,1552,955,1480,1128,1767,1106,169,169,169,1911,1255,1499,965,1387
+CUTOFFAT,AB Par TT,start,3,16,1,228,38,36,48,25,78,6,1071
+TTSTATS,AB Par TT,start,3,16,1,1740,0,0,1740,1740,0,0,0,0
+ThreadSanitizer: reported 1 warnings
+--- strategy=AB Par TT pos=start threads=48
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=004 mask=4,52
+AFFINITY tid=020 mask=20,68
+AFFINITY tid=018 mask=18,66
+AFFINITY tid=006 mask=6,54
+AFFINITY tid=016 mask=16,64
+AFFINITY tid=001 mask=1,49
+AFFINITY tid=008 mask=8,56
+AFFINITY tid=025 mask=25,73
+AFFINITY tid=019 mask=19,67
+AFFINITY tid=014 mask=14,62
+AFFINITY tid=022 mask=22,70
+AFFINITY tid=046 mask=46,94
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=013 mask=13,61
+AFFINITY tid=047 mask=47,95
+AFFINITY tid=030 mask=30,78
+AFFINITY tid=010 mask=10,58
+AFFINITY tid=015 mask=15,63
+AFFINITY tid=012 mask=12,60
+AFFINITY tid=045 mask=45,93
+AFFINITY tid=017 mask=17,65
+AFFINITY tid=036 mask=36,84
+AFFINITY tid=026 mask=26,74
+AFFINITY tid=028 mask=28,76
+AFFINITY tid=040 mask=40,88
+AFFINITY tid=034 mask=34,82
+AFFINITY tid=007 mask=7,55
+AFFINITY tid=032 mask=32,80
+AFFINITY tid=038 mask=38,86
+AFFINITY tid=024 mask=24,72
+AFFINITY tid=005 mask=5,53
+AFFINITY tid=044 mask=44,92
+AFFINITY tid=035 mask=35,83
+AFFINITY tid=011 mask=11,59
+AFFINITY tid=037 mask=37,85
+AFFINITY tid=003 mask=3,51
+AFFINITY tid=029 mask=29,77
+AFFINITY tid=009 mask=9,57
+AFFINITY tid=039 mask=39,87
+AFFINITY tid=021 mask=21,69
+AFFINITY tid=041 mask=41,89
+AFFINITY tid=031 mask=31,79
+AFFINITY tid=023 mask=23,71
+AFFINITY tid=042 mask=42,90
+AFFINITY tid=033 mask=33,81
+AFFINITY tid=043 mask=43,91
+AFFINITY tid=027 mask=27,75
+==================
+WARNING: ThreadSanitizer: data race (pid=3327049)
+  Atomic read of size 1 at 0x7fc655c33640 by thread T28:
+    #0 pthread_mutex_lock /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1420:3 (abtest-tsan+0x43ed9b)
+    #1 __kmp_lock_suspend_mx /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1919:16 (libiomp5.so+0x153401)
+    #2 void __kmp_resume_template<kmp_flag_64<false, true>>(int, kmp_flag_64<false, true>*) /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:2132:3 (libiomp5.so+0x153401)
+    #3 AbParTTNew::rootSplit(Board&, std::vector<Move, std::allocator<Move>>&, std::vector<int, std::allocator<int>>&, std::vector<long, std::allocator<long>>*, int, unsigned long, int, std::vector<(anonymous namespace)::TTSlotStat, std::allocator<(anonymous namespace)::TTSlotStat>>&) (.extracted.14) ~/abalone/versions/4-ab-par/../5-ab-par-tt/search-ab-par-tt.cpp (abtest-tsan+0x521bae)
+    #4 __kmp_invoke_microtask <null> (libiomp5.so+0x14fdc8)
+    #5 AbParTTNew::rootSplit(Board&, std::vector<Move, std::allocator<Move>>&, std::vector<int, std::allocator<int>>&, std::vector<long, std::allocator<long>>*, int, unsigned long, int, std::vector<(anonymous namespace)::TTSlotStat, std::allocator<(anonymous namespace)::TTSlotStat>>&) ~/abalone/versions/4-ab-par/../5-ab-par-tt/search-ab-par-tt.cpp:205:5 (abtest-tsan+0x51fb8d)
+    #6 AbParTTNew::searchBestMove() ~/abalone/versions/4-ab-par/../5-ab-par-tt/search-ab-par-tt.cpp:303:5 (abtest-tsan+0x51fb8d)
+
+  Previous write of size 1 at 0x7fc655c33640 by thread T29:
+    #0 pthread_mutex_init /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1394:3 (abtest-tsan+0x43ea50)
+    #1 __kmp_suspend_initialize_thread /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1886:14 (libiomp5.so+0x152820)
+    #2 AbParTTNew::rootSplit(Board&, std::vector<Move, std::allocator<Move>>&, std::vector<int, std::allocator<int>>&, std::vector<long, std::allocator<long>>*, int, unsigned long, int, std::vector<(anonymous namespace)::TTSlotStat, std::allocator<(anonymous namespace)::TTSlotStat>>&) (.extracted.14) ~/abalone/versions/4-ab-par/../5-ab-par-tt/search-ab-par-tt.cpp (abtest-tsan+0x521bae)
+    #3 __kmp_invoke_microtask <null> (libiomp5.so+0x14fdc8)
+    #4 AbParTTNew::rootSplit(Board&, std::vector<Move, std::allocator<Move>>&, std::vector<int, std::allocator<int>>&, std::vector<long, std::allocator<long>>*, int, unsigned long, int, std::vector<(anonymous namespace)::TTSlotStat, std::allocator<(anonymous namespace)::TTSlotStat>>&) ~/abalone/versions/4-ab-par/../5-ab-par-tt/search-ab-par-tt.cpp:205:5 (abtest-tsan+0x51fb8d)
+    #5 AbParTTNew::searchBestMove() ~/abalone/versions/4-ab-par/../5-ab-par-tt/search-ab-par-tt.cpp:303:5 (abtest-tsan+0x51fb8d)
+
+  Thread T28 'openmp_worker' (tid=3327078, running) created by main thread at:
+    #0 pthread_create /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1090:3 (abtest-tsan+0x43d22e)
+    #1 __kmp_create_worker /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1015:7 (libiomp5.so+0x1508e5)
+    #2 SearchStrategy::bestMove(Board*) ~/abalone/versions/4-ab-par/search.cpp:266:5 (abtest-tsan+0x528527)
+    #3 main ~/abalone/versions/4-ab-par/abtest.cpp:91:26 (abtest-tsan+0x4eedfc)
+
+  Thread T29 'openmp_worker' (tid=3327079, running) created by main thread at:
+    #0 pthread_create /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1090:3 (abtest-tsan+0x43d22e)
+    #1 __kmp_create_worker /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1015:7 (libiomp5.so+0x1508e5)
+    #2 SearchStrategy::bestMove(Board*) ~/abalone/versions/4-ab-par/search.cpp:266:5 (abtest-tsan+0x528527)
+    #3 main ~/abalone/versions/4-ab-par/abtest.cpp:91:26 (abtest-tsan+0x4eedfc)
+
+SUMMARY: ThreadSanitizer: data race /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1919:16 in __kmp_lock_suspend_mx
+==================
+AB Par TT,start,3,48,0,66,A1/RightDown,2.191644,1980,49186,0,24.307,1755,225,T0=0:0:0.000000,T1=45:1325:0.495518,T2=45:1696:0.543400,T3=45:1239:0.472419,T4=45:1362:0.504066,T5=45:1275:0.483231,T6=45:1400:0.508832,T7=45:1722:0.546409,T8=45:1454:0.518690,T9=45:935:0.389287,T10=45:696:0.310010,T11=45:821:0.360932,T12=45:1407:0.510614,T13=0:0:0.000000,T14=45:1165:0.453573,T15=45:1866:0.554323,T16=45:2060:0.566018,T17=45:849:0.371508,T18=45:692:0.312592,T19=45:358:0.170915,T20=45:771:0.339563,T21=45:698:0.313881,T22=45:1453:0.516932,T23=45:953:0.401489,T24=45:1505:0.590621,T25=45:659:0.422722,T26=45:1435:0.587736,T27=45:531:0.346661,T28=45:1451:0.587696,T29=45:686:0.424995,T30=45:1576:0.592524,T31=45:1507:0.591498,T32=45:1355:0.580164,T33=45:672:0.415866,T34=45:803:0.465276,T35=45:916:0.510481,T36=45:483:0.320859,T37=0:0:0.000000,T38=0:0:0.000000,T39=45:1500:0.589177,T40=45:1342:0.579540,T41=45:1638:0.593350,T42=45:512:0.339497,T43=45:492:0.328908,T44=45:943:0.519243,T45=45:1642:0.593527,T46=45:598:0.386785,T47=45:743:0.451497
+ROOTNODES,AB Par TT,start,3,48,0,737,816,866,731,528,894,741,704,557,537,743,643,961,403,788,576,980,988,1545,1452,1498,1687,1407,998,1210,1370,1445,1683,2105,1621,1552,1284,1480,1550,1767,1496,848,717,1400,1911,1741,1499,1320,1387
+CUTOFFAT,AB Par TT,start,3,48,0,272,43,36,48,25,85,6,1240
+TTSTATS,AB Par TT,start,3,48,0,1980,0,0,1980,1980,0,0,0,0
+AB Par TT,start,3,48,1,66,A1/RightDown,1.154417,1980,49186,0,24.307,1755,225,T0=0:0:0.000000,T1=45:2060:0.557598,T2=0:0:0.000000,T3=45:1451:0.509689,T4=45:692:0.314009,T5=45:1435:0.512442,T6=45:1275:0.477458,T7=45:1505:0.520919,T8=45:771:0.337486,T9=45:1407:0.499135,T10=45:1507:0.521616,T11=45:743:0.331714,T12=45:1400:0.500793,T13=45:1453:0.512929,T14=45:358:0.173587,T15=45:483:0.225390,T16=45:1696:0.536486,T17=45:696:0.313659,T18=45:821:0.360509,T19=45:1454:0.516796,T20=45:849:0.367465,T21=45:659:0.304969,T22=45:598:0.280833,T23=45:1638:0.533879,T24=45:1362:0.578440,T25=45:686:0.427412,T26=0:0:0.000000,T27=45:698:0.419855,T28=45:1866:0.590220,T29=45:803:0.469486,T30=45:916:0.518664,T31=45:531:0.340261,T32=45:935:0.521137,T33=45:1642:0.588321,T34=45:1165:0.559800,T35=45:1325:0.574363,T36=0:0:0.000000,T37=45:672:0.414491,T38=45:492:0.317350,T39=45:1500:0.583663,T40=45:1722:0.588677,T41=45:943:0.527543,T42=45:1342:0.577590,T43=45:512:0.330749,T44=45:1355:0.577343,T45=45:1239:0.566865,T46=45:1576:0.586699,T47=45:953:0.525715
+ROOTNODES,AB Par TT,start,3,48,1,737,816,866,731,528,894,741,704,557,537,743,643,961,403,788,576,980,988,1545,1452,1498,1687,1407,998,1210,1370,1445,1683,2105,1621,1552,1284,1480,1550,1767,1496,848,717,1400,1911,1741,1499,1320,1387
+CUTOFFAT,AB Par TT,start,3,48,1,272,43,36,48,25,85,6,1240
+TTSTATS,AB Par TT,start,3,48,1,1980,0,0,1980,1980,0,0,0,0
+ThreadSanitizer: reported 1 warnings
+--- strategy=AB Par TT pos=position-midgame1 threads=4
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=003 mask=3,51
+AFFINITY tid=001 mask=1,49
+AB Par TT,position-midgame1,3,4,0,-163,F3-G4/Left,1.469624,1470,40949,2,24.983,1203,267,T0=429:10424:0.471703,T1=309:10687:0.470772,T2=365:10073:0.461254,T3=367:9765:0.461701
+ROOTNODES,AB Par TT,position-midgame1,3,4,0,399,493,509,612,432,566,311,318,336,602,453,527,232,274,570,628,590,302,581,543,545,613,329,543,611,636,512,420,673,485,329,331,363,480,516,480,594,641,651,393,616,599,547,583,607,677,528,606,622,603,604,614,645,351,598,625,602,649,449,1019,1698,1356,1153,446,424,470,359,1282,1430,1128,1108
+CUTOFFAT,AB Par TT,position-midgame1,3,4,0,559,28,1,26,43,13,17,516
+TTSTATS,AB Par TT,position-midgame1,3,4,0,1472,2,2,1468,1470,1,1,0,2
+AB Par TT,position-midgame1,3,4,1,-163,F3-G4/Left,0.608481,1470,40949,2,24.983,1203,267,T0=429:10424:0.473734,T1=309:10687:0.471246,T2=365:10073:0.462831,T3=367:9765:0.462171
+ROOTNODES,AB Par TT,position-midgame1,3,4,1,399,493,509,612,432,566,311,318,336,602,453,527,232,274,570,628,590,302,581,543,545,613,329,543,611,636,512,420,673,485,329,331,363,480,516,480,594,641,651,393,616,599,547,583,607,677,528,606,622,603,604,614,645,351,598,625,602,649,449,1019,1698,1356,1153,446,424,470,359,1282,1430,1128,1108
+CUTOFFAT,AB Par TT,position-midgame1,3,4,1,559,28,1,26,43,13,17,516
+TTSTATS,AB Par TT,position-midgame1,3,4,1,1472,2,2,1468,1470,1,1,0,2
+--- strategy=AB Par TT pos=position-midgame1 threads=16
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=004 mask=4,52
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=006 mask=6,54
+AFFINITY tid=005 mask=5,53
+AFFINITY tid=007 mask=7,55
+AFFINITY tid=008 mask=8,56
+AFFINITY tid=003 mask=3,51
+AFFINITY tid=013 mask=13,61
+AFFINITY tid=014 mask=14,62
+AFFINITY tid=015 mask=15,63
+AFFINITY tid=001 mask=1,49
+AFFINITY tid=012 mask=12,60
+AFFINITY tid=009 mask=9,57
+AFFINITY tid=011 mask=11,59
+AFFINITY tid=010 mask=10,58
+==================
+WARNING: ThreadSanitizer: data race (pid=3327106)
+  Atomic read of size 1 at 0x7f4ec99db640 by thread T4:
+    #0 pthread_mutex_lock /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1420:3 (abtest-tsan+0x43ed9b)
+    #1 __kmp_lock_suspend_mx /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1919:16 (libiomp5.so+0x153401)
+    #2 void __kmp_resume_template<kmp_flag_64<false, true>>(int, kmp_flag_64<false, true>*) /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:2132:3 (libiomp5.so+0x153401)
+    #3 AbParTTNew::rootSplit(Board&, std::vector<Move, std::allocator<Move>>&, std::vector<int, std::allocator<int>>&, std::vector<long, std::allocator<long>>*, int, unsigned long, int, std::vector<(anonymous namespace)::TTSlotStat, std::allocator<(anonymous namespace)::TTSlotStat>>&) (.extracted.14) ~/abalone/versions/4-ab-par/../5-ab-par-tt/search-ab-par-tt.cpp (abtest-tsan+0x521bae)
+    #4 __kmp_invoke_microtask <null> (libiomp5.so+0x14fdc8)
+    #5 AbParTTNew::rootSplit(Board&, std::vector<Move, std::allocator<Move>>&, std::vector<int, std::allocator<int>>&, std::vector<long, std::allocator<long>>*, int, unsigned long, int, std::vector<(anonymous namespace)::TTSlotStat, std::allocator<(anonymous namespace)::TTSlotStat>>&) ~/abalone/versions/4-ab-par/../5-ab-par-tt/search-ab-par-tt.cpp:205:5 (abtest-tsan+0x51fb8d)
+    #6 AbParTTNew::searchBestMove() ~/abalone/versions/4-ab-par/../5-ab-par-tt/search-ab-par-tt.cpp:303:5 (abtest-tsan+0x51fb8d)
+
+  Previous write of size 1 at 0x7f4ec99db640 by thread T7:
+    #0 pthread_mutex_init /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1394:3 (abtest-tsan+0x43ea50)
+    #1 __kmp_suspend_initialize_thread /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1886:14 (libiomp5.so+0x152820)
+    #2 AbParTTNew::rootSplit(Board&, std::vector<Move, std::allocator<Move>>&, std::vector<int, std::allocator<int>>&, std::vector<long, std::allocator<long>>*, int, unsigned long, int, std::vector<(anonymous namespace)::TTSlotStat, std::allocator<(anonymous namespace)::TTSlotStat>>&) (.extracted.14) ~/abalone/versions/4-ab-par/../5-ab-par-tt/search-ab-par-tt.cpp (abtest-tsan+0x521bae)
+    #3 __kmp_invoke_microtask <null> (libiomp5.so+0x14fdc8)
+    #4 AbParTTNew::rootSplit(Board&, std::vector<Move, std::allocator<Move>>&, std::vector<int, std::allocator<int>>&, std::vector<long, std::allocator<long>>*, int, unsigned long, int, std::vector<(anonymous namespace)::TTSlotStat, std::allocator<(anonymous namespace)::TTSlotStat>>&) ~/abalone/versions/4-ab-par/../5-ab-par-tt/search-ab-par-tt.cpp:205:5 (abtest-tsan+0x51fb8d)
+    #5 AbParTTNew::searchBestMove() ~/abalone/versions/4-ab-par/../5-ab-par-tt/search-ab-par-tt.cpp:303:5 (abtest-tsan+0x51fb8d)
+
+  Thread T4 'openmp_worker' (tid=3327113, running) created by main thread at:
+    #0 pthread_create /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1090:3 (abtest-tsan+0x43d22e)
+    #1 __kmp_create_worker /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1015:7 (libiomp5.so+0x1508e5)
+    #2 SearchStrategy::bestMove(Board*) ~/abalone/versions/4-ab-par/search.cpp:266:5 (abtest-tsan+0x528527)
+    #3 main ~/abalone/versions/4-ab-par/abtest.cpp:91:26 (abtest-tsan+0x4eedfc)
+
+  Thread T7 'openmp_worker' (tid=3327116, running) created by main thread at:
+    #0 pthread_create /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1090:3 (abtest-tsan+0x43d22e)
+    #1 __kmp_create_worker /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1015:7 (libiomp5.so+0x1508e5)
+    #2 SearchStrategy::bestMove(Board*) ~/abalone/versions/4-ab-par/search.cpp:266:5 (abtest-tsan+0x528527)
+    #3 main ~/abalone/versions/4-ab-par/abtest.cpp:91:26 (abtest-tsan+0x4eedfc)
+
+SUMMARY: ThreadSanitizer: data race /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1919:16 in __kmp_lock_suspend_mx
+==================
+AB Par TT,position-midgame1,3,16,0,-163,F3-G4/Left,1.822544,2561,44045,3,18.101,2275,286,T0=167:2069:0.322331,T1=123:2302:0.334928,T2=134:2317:0.337471,T3=127:2432:0.345421,T4=190:3074:0.386385,T5=150:3465:0.398050,T6=209:4622:0.412876,T7=122:2402:0.341845,T8=116:2147:0.316285,T9=201:3267:0.393083,T10=118:2232:0.323620,T11=116:2216:0.325489,T12=121:2246:0.327291,T13=273:3051:0.386408,T14=196:2352:0.343444,T15=198:3851:0.403321
+ROOTNODES,AB Par TT,position-midgame1,3,16,0,399,493,509,762,432,566,465,472,480,746,597,671,370,417,716,628,590,302,581,543,545,613,329,543,611,636,512,420,673,485,329,469,507,480,516,480,594,641,651,393,616,599,547,583,607,677,528,606,622,603,604,614,645,351,598,625,602,649,449,1424,1698,1356,1424,446,424,470,359,1906,2575,1128,1108
+CUTOFFAT,AB Par TT,position-midgame1,3,16,0,1531,56,2,56,57,14,17,542
+TTSTATS,AB Par TT,position-midgame1,3,16,0,2564,3,2,2559,2561,1,2,0,5
+AB Par TT,position-midgame1,3,16,1,-163,F3-G4/Left,0.794846,2561,44045,3,18.101,2275,286,T0=167:2069:0.323943,T1=122:2402:0.341833,T2=198:3851:0.404347,T3=134:2427:0.346290,T4=121:2219:0.324618,T5=150:3465:0.398956,T6=123:2133:0.317333,T7=202:4636:0.413762,T8=118:2259:0.328882,T9=273:3051:0.388061,T10=116:2315:0.335705,T11=201:3267:0.393928,T12=127:2322:0.339516,T13=196:2352:0.342758,T14=123:2203:0.328424,T15=190:3074:0.386635
+ROOTNODES,AB Par TT,position-midgame1,3,16,1,399,493,509,762,432,566,465,472,480,746,597,671,370,417,716,628,590,302,581,543,545,613,329,543,611,636,512,420,673,485,329,469,507,480,516,480,594,641,651,393,616,599,547,583,607,677,528,606,622,603,604,614,645,351,598,625,602,649,449,1424,1698,1356,1424,446,424,470,359,1906,2575,1128,1108
+CUTOFFAT,AB Par TT,position-midgame1,3,16,1,1531,56,2,56,57,14,17,542
+TTSTATS,AB Par TT,position-midgame1,3,16,1,2564,3,2,2559,2561,1,2,0,5
+ThreadSanitizer: reported 1 warnings
+--- strategy=AB Par TT pos=position-midgame1 threads=48
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=004 mask=4,52
+AFFINITY tid=016 mask=16,64
+AFFINITY tid=013 mask=13,61
+AFFINITY tid=014 mask=14,62
+AFFINITY tid=012 mask=12,60
+AFFINITY tid=017 mask=17,65
+AFFINITY tid=020 mask=20,68
+AFFINITY tid=006 mask=6,54
+AFFINITY tid=045 mask=45,93
+AFFINITY tid=022 mask=22,70
+AFFINITY tid=015 mask=15,63
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=047 mask=47,95
+AFFINITY tid=024 mask=24,72
+AFFINITY tid=046 mask=46,94
+AFFINITY tid=018 mask=18,66
+AFFINITY tid=044 mask=44,92
+AFFINITY tid=001 mask=1,49
+AFFINITY tid=019 mask=19,67
+AFFINITY tid=030 mask=30,78
+AFFINITY tid=032 mask=32,80
+AFFINITY tid=010 mask=10,58
+AFFINITY tid=008 mask=8,56
+AFFINITY tid=007 mask=7,55
+AFFINITY tid=026 mask=26,74
+AFFINITY tid=040 mask=40,88
+AFFINITY tid=028 mask=28,76
+AFFINITY tid=009 mask=9,57
+AFFINITY tid=003 mask=3,51
+AFFINITY tid=005 mask=5,53
+AFFINITY tid=031 mask=31,79
+AFFINITY tid=033 mask=33,81
+AFFINITY tid=037 mask=37,85
+AFFINITY tid=021 mask=21,69
+AFFINITY tid=038 mask=38,86
+AFFINITY tid=029 mask=29,77
+AFFINITY tid=035 mask=35,83
+AFFINITY tid=036 mask=36,84
+AFFINITY tid=043 mask=43,91
+AFFINITY tid=011 mask=11,59
+AFFINITY tid=039 mask=39,87
+AFFINITY tid=023 mask=23,71
+AFFINITY tid=034 mask=34,82
+AFFINITY tid=041 mask=41,89
+AFFINITY tid=027 mask=27,75
+AFFINITY tid=042 mask=42,90
+AFFINITY tid=025 mask=25,73
+==================
+WARNING: ThreadSanitizer: data race (pid=3327126)
+  Atomic read of size 1 at 0x7fc1f2463640 by thread T40:
+    #0 pthread_mutex_lock /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1420:3 (abtest-tsan+0x43ed9b)
+    #1 __kmp_lock_suspend_mx /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1919:16 (libiomp5.so+0x153401)
+    #2 void __kmp_resume_template<kmp_flag_64<false, true>>(int, kmp_flag_64<false, true>*) /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:2132:3 (libiomp5.so+0x153401)
+    #3 AbParTTNew::rootSplit(Board&, std::vector<Move, std::allocator<Move>>&, std::vector<int, std::allocator<int>>&, std::vector<long, std::allocator<long>>*, int, unsigned long, int, std::vector<(anonymous namespace)::TTSlotStat, std::allocator<(anonymous namespace)::TTSlotStat>>&) (.extracted.14) ~/abalone/versions/4-ab-par/../5-ab-par-tt/search-ab-par-tt.cpp (abtest-tsan+0x521bae)
+    #4 __kmp_invoke_microtask <null> (libiomp5.so+0x14fdc8)
+    #5 AbParTTNew::rootSplit(Board&, std::vector<Move, std::allocator<Move>>&, std::vector<int, std::allocator<int>>&, std::vector<long, std::allocator<long>>*, int, unsigned long, int, std::vector<(anonymous namespace)::TTSlotStat, std::allocator<(anonymous namespace)::TTSlotStat>>&) ~/abalone/versions/4-ab-par/../5-ab-par-tt/search-ab-par-tt.cpp:205:5 (abtest-tsan+0x51fb8d)
+    #6 AbParTTNew::searchBestMove() ~/abalone/versions/4-ab-par/../5-ab-par-tt/search-ab-par-tt.cpp:303:5 (abtest-tsan+0x51fb8d)
+
+  Previous write of size 1 at 0x7fc1f2463640 by thread T41:
+    #0 pthread_mutex_init /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1394:3 (abtest-tsan+0x43ea50)
+    #1 __kmp_suspend_initialize_thread /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1886:14 (libiomp5.so+0x152820)
+    #2 AbParTTNew::rootSplit(Board&, std::vector<Move, std::allocator<Move>>&, std::vector<int, std::allocator<int>>&, std::vector<long, std::allocator<long>>*, int, unsigned long, int, std::vector<(anonymous namespace)::TTSlotStat, std::allocator<(anonymous namespace)::TTSlotStat>>&) (.extracted.14) ~/abalone/versions/4-ab-par/../5-ab-par-tt/search-ab-par-tt.cpp (abtest-tsan+0x521bae)
+    #3 __kmp_invoke_microtask <null> (libiomp5.so+0x14fdc8)
+    #4 AbParTTNew::rootSplit(Board&, std::vector<Move, std::allocator<Move>>&, std::vector<int, std::allocator<int>>&, std::vector<long, std::allocator<long>>*, int, unsigned long, int, std::vector<(anonymous namespace)::TTSlotStat, std::allocator<(anonymous namespace)::TTSlotStat>>&) ~/abalone/versions/4-ab-par/../5-ab-par-tt/search-ab-par-tt.cpp:205:5 (abtest-tsan+0x51fb8d)
+    #5 AbParTTNew::searchBestMove() ~/abalone/versions/4-ab-par/../5-ab-par-tt/search-ab-par-tt.cpp:303:5 (abtest-tsan+0x51fb8d)
+
+  Thread T40 'openmp_worker' (tid=3327175, running) created by main thread at:
+    #0 pthread_create /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1090:3 (abtest-tsan+0x43d22e)
+    #1 __kmp_create_worker /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1015:7 (libiomp5.so+0x1508e5)
+    #2 SearchStrategy::bestMove(Board*) ~/abalone/versions/4-ab-par/search.cpp:266:5 (abtest-tsan+0x528527)
+    #3 main ~/abalone/versions/4-ab-par/abtest.cpp:91:26 (abtest-tsan+0x4eedfc)
+
+  Thread T41 'openmp_worker' (tid=3327176, running) created by main thread at:
+    #0 pthread_create /netbatch/donb13450_00/runDir/dir/workspace/NIT/xmain-rel/LX/xmainefi2linux_release/ws/icsws/llvm/compiler-rt/lib/tsan/rtl/tsan_interceptors_posix.cpp:1090:3 (abtest-tsan+0x43d22e)
+    #1 __kmp_create_worker /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1015:7 (libiomp5.so+0x1508e5)
+    #2 SearchStrategy::bestMove(Board*) ~/abalone/versions/4-ab-par/search.cpp:266:5 (abtest-tsan+0x528527)
+    #3 main ~/abalone/versions/4-ab-par/abtest.cpp:91:26 (abtest-tsan+0x4eedfc)
+
+SUMMARY: ThreadSanitizer: data race /localdisk/promo-build/20250910/tmp/lin_32e-rtl_int_5_nor_dyn.rel.c0.s0.tcm1.t1..h1.u1-anompclxlin01/../../src/z_Linux_util.cpp:1919:16 in __kmp_lock_suspend_mx
+==================
+AB Par TT,position-midgame1,3,48,0,-163,F3-G4/Left,2.192248,4898,46406,11,19.928,4580,318,T0=83:1025:0.441409,T1=84:661:0.333521,T2=94:956:0.422616,T3=94:990:0.431303,T4=166:834:0.406359,T5=85:670:0.329946,T6=173:1809:0.516850,T7=94:1063:0.444636,T8=95:1046:0.441815,T9=174:1047:0.448067,T10=84:687:0.342846,T11=85:651:0.325933,T12=90:915:0.404858,T13=85:657:0.330384,T14=94:993:0.430529,T15=171:3120:0.559331,T16=168:1853:0.520208,T17=84:735:0.356410,T18=88:1026:0.437912,T19=172:2429:0.550415,T20=86:705:0.345336,T21=83:663:0.327114,T22=86:712:0.352635,T23=96:974:0.425051,T24=84:713:0.424333,T25=90:830:0.453124,T26=101:1013:0.483775,T27=83:546:0.356647,T28=84:590:0.384173,T29=85:679:0.409906,T30=170:1745:0.553491,T31=88:886:0.464923,T32=91:966:0.474138,T33=84:542:0.354103,T34=88:674:0.415103,T35=83:573:0.369019,T36=92:921:0.469934,T37=85:644:0.397941,T38=85:608:0.384992,T39=90:476:0.323993,T40=167:1525:0.538215,T41=85:674:0.414083,T42=118:2059:0.556454,T43=86:741:0.427731,T44=94:859:0.462361,T45=84:645:0.401284,T46=84:688:0.414553,T47=83:588:0.382987
+ROOTNODES,AB Par TT,position-midgame1,3,48,0,399,492,509,762,432,566,465,472,480,746,597,671,370,417,716,773,736,448,729,689,693,771,471,695,761,798,656,564,819,629,473,469,507,626,661,626,742,791,797,539,764,745,692,729,755,827,674,606,622,749,604,614,645,491,598,625,602,649,449,1424,1698,1356,1424,446,424,470,359,1906,2575,1128,1108
+CUTOFFAT,AB Par TT,position-midgame1,3,48,0,3866,56,2,56,57,14,15,514
+TTSTATS,AB Par TT,position-midgame1,3,48,0,4909,11,2,4896,4898,1,10,0,13
+AB Par TT,position-midgame1,3,48,1,-163,F3-G4/Left,1.134569,4825,46333,11,19.871,4508,317,T0=83:1025:0.451406,T1=88:979:0.440303,T2=93:930:0.427656,T3=96:955:0.436006,T4=95:955:0.443141,T5=101:978:0.443798,T6=85:679:0.344468,T7=173:3097:0.557493,T8=84:713:0.360545,T9=88:674:0.346700,T10=94:981:0.444375,T11=86:712:0.364057,T12=167:1707:0.513240,T13=84:688:0.348790,T14=99:1035:0.448598,T15=94:936:0.434692,T16=85:670:0.337791,T17=175:1815:0.521801,T18=91:963:0.436059,T19=86:705:0.354224,T20=161:803:0.408699,T21=86:741:0.365211,T22=94:1015:0.447722,T23=166:1855:0.524481,T24=84:590:0.374098,T25=177:1672:0.537730,T26=83:577:0.364577,T27=84:661:0.398941,T28=94:913:0.460467,T29=85:631:0.386288,T30=84:735:0.418078,T31=83:573:0.361347,T32=84:645:0.395916,T33=85:674:0.404224,T34=87:885:0.452045,T35=90:1030:0.471119,T36=85:657:0.397741,T37=85:651:0.395593,T38=84:542:0.348585,T39=85:608:0.375116,T40=83:604:0.377914,T41=83:608:0.380078,T42=168:2302:0.554674,T43=118:2059:0.552324,T44=84:687:0.408289,T45=101:820:0.441068,T46=85:644:0.391306,T47=90:954:0.461239
+ROOTNODES,AB Par TT,position-midgame1,3,48,1,399,493,509,762,432,566,465,472,480,746,597,671,369,418,716,773,736,448,729,689,693,771,471,695,761,798,656,564,819,629,473,469,507,626,661,626,742,791,797,538,764,745,692,729,755,827,674,606,622,603,604,614,645,491,598,625,602,649,449,1424,1698,1356,1424,446,424,470,359,1906,2575,1128,1108
+CUTOFFAT,AB Par TT,position-midgame1,3,48,1,3793,56,2,56,57,14,15,515
+TTSTATS,AB Par TT,position-midgame1,3,48,1,4836,11,2,4823,4825,1,10,0,13
+ThreadSanitizer: reported 1 warnings
+--- strategy=AB Par TT pos=position-endgame threads=4
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=001 mask=1,49
+AFFINITY tid=003 mask=3,51
+AB Par TT,position-endgame,3,4,0,-6420,I7/LeftUp/Push,1.050227,812,6431,7,11.490,697,115,T0=173:1826:0.059875,T1=216:1552:0.057999,T2=213:1524:0.057087,T3=210:1529:0.057623
+ROOTNODES,AB Par TT,position-endgame,3,4,0,240,256,270,261,279,292,87,81,75,89,83,551,326,614,89,84,89,82,83,89,85,83,85,85,73,81,83,75,83,89,75,81,83,85,83,393,573,631,87,84,233
+CUTOFFAT,AB Par TT,position-endgame,3,4,0,547,33,7,0,10,30,1,69
+TTSTATS,AB Par TT,position-endgame,3,4,0,819,7,1,811,812,1,6,0,8
+AB Par TT,position-endgame,3,4,1,-6420,I7/LeftUp/Push,0.194789,812,6431,7,11.490,697,115,T0=173:1826:0.060266,T1=213:1482:0.057003,T2=216:1594:0.058045,T3=210:1529:0.057657
+ROOTNODES,AB Par TT,position-endgame,3,4,1,240,256,270,261,279,292,87,81,75,89,83,551,326,614,89,84,89,82,83,89,85,83,85,85,73,81,83,75,83,89,75,81,83,85,83,393,573,631,87,84,233
+CUTOFFAT,AB Par TT,position-endgame,3,4,1,547,33,7,0,10,30,1,69
+TTSTATS,AB Par TT,position-endgame,3,4,1,819,7,1,811,812,1,6,0,8
+--- strategy=AB Par TT pos=position-endgame threads=16
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=003 mask=3,51
+AFFINITY tid=004 mask=4,52
+AFFINITY tid=006 mask=6,54
+AFFINITY tid=008 mask=8,56
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=007 mask=7,55
+AFFINITY tid=005 mask=5,53
+AFFINITY tid=013 mask=13,61
+AFFINITY tid=014 mask=14,62
+AFFINITY tid=015 mask=15,63
+AFFINITY tid=001 mask=1,49
+AFFINITY tid=012 mask=12,60
+AFFINITY tid=011 mask=11,59
+AFFINITY tid=009 mask=9,57
+AFFINITY tid=010 mask=10,58
+AB Par TT,position-endgame,3,16,0,-6420,I7/LeftUp/Push,1.295075,1525,7401,5,12.336,1393,132,T0=78:326:0.041436,T1=155:321:0.042997,T2=122:885:0.056038,T3=78:386:0.044641,T4=72:652:0.053333,T5=79:589:0.051890,T6=107:645:0.053899,T7=76:347:0.042419,T8=110:836:0.055643,T9=84:350:0.042429,T10=84:351:0.042956,T11=83:338:0.041167,T12=84:341:0.041520,T13=81:352:0.042662,T14=150:324:0.042318,T15=82:358:0.042693
+ROOTNODES,AB Par TT,position-endgame,3,16,0,240,256,270,261,279,292,272,249,257,280,263,668,464,724,239,234,237,82,83,89,85,83,85,85,73,81,83,75,83,89,75,81,83,85,83,393,573,593,87,84,233
+CUTOFFAT,AB Par TT,position-endgame,3,16,0,1253,25,7,0,10,30,1,67
+TTSTATS,AB Par TT,position-endgame,3,16,0,1530,5,2,1523,1525,1,4,0,7
+AB Par TT,position-endgame,3,16,1,-6420,I7/LeftUp/Push,0.429931,1525,7401,5,12.336,1393,132,T0=78:326:0.041551,T1=110:836:0.055832,T2=154:339:0.043288,T3=84:337:0.041292,T4=84:351:0.043548,T5=78:386:0.045205,T6=84:356:0.043583,T7=122:866:0.056013,T8=79:589:0.051878,T9=107:645:0.053748,T10=81:346:0.042818,T11=150:324:0.043495,T12=82:358:0.043210,T13=72:652:0.053395,T14=84:351:0.042230,T15=76:339:0.041475
+ROOTNODES,AB Par TT,position-endgame,3,16,1,240,256,270,261,279,292,272,249,257,280,263,668,464,724,239,234,237,82,83,89,85,83,85,85,73,81,83,75,83,89,75,81,83,85,83,393,573,593,87,84,233
+CUTOFFAT,AB Par TT,position-endgame,3,16,1,1253,25,7,0,10,30,1,67
+TTSTATS,AB Par TT,position-endgame,3,16,1,1530,5,2,1523,1525,1,4,0,7
+--- strategy=AB Par TT pos=position-endgame threads=48
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=004 mask=4,52
+AFFINITY tid=014 mask=14,62
+AFFINITY tid=015 mask=15,63
+AFFINITY tid=020 mask=20,68
+AFFINITY tid=006 mask=6,54
+AFFINITY tid=018 mask=18,66
+AFFINITY tid=016 mask=16,64
+AFFINITY tid=008 mask=8,56
+AFFINITY tid=046 mask=46,94
+AFFINITY tid=045 mask=45,93
+AFFINITY tid=013 mask=13,61
+AFFINITY tid=047 mask=47,95
+AFFINITY tid=017 mask=17,65
+AFFINITY tid=019 mask=19,67
+AFFINITY tid=001 mask=1,49
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=003 mask=3,51
+AFFINITY tid=028 mask=28,76
+AFFINITY tid=032 mask=32,80
+AFFINITY tid=005 mask=5,53
+AFFINITY tid=036 mask=36,84
+AFFINITY tid=012 mask=12,60
+AFFINITY tid=011 mask=11,59
+AFFINITY tid=031 mask=31,79
+AFFINITY tid=021 mask=21,69
+AFFINITY tid=033 mask=33,81
+AFFINITY tid=010 mask=10,58
+AFFINITY tid=030 mask=30,78
+AFFINITY tid=044 mask=44,92
+AFFINITY tid=009 mask=9,57
+AFFINITY tid=040 mask=40,88
+AFFINITY tid=022 mask=22,70
+AFFINITY tid=042 mask=42,90
+AFFINITY tid=007 mask=7,55
+AFFINITY tid=027 mask=27,75
+AFFINITY tid=043 mask=43,91
+AFFINITY tid=026 mask=26,74
+AFFINITY tid=029 mask=29,77
+AFFINITY tid=023 mask=23,71
+AFFINITY tid=038 mask=38,86
+AFFINITY tid=034 mask=34,82
+AFFINITY tid=035 mask=35,83
+AFFINITY tid=039 mask=39,87
+AFFINITY tid=024 mask=24,72
+AFFINITY tid=037 mask=37,85
+AFFINITY tid=041 mask=41,89
+AFFINITY tid=025 mask=25,73
+AB Par TT,position-endgame,3,48,0,-6420,I7/LeftUp/Push,1.533541,3112,9879,13,17.961,2934,178,T0=72:161:0.060194,T1=76:193:0.065496,T2=78:201:0.064481,T3=77:179:0.063297,T4=72:170:0.061605,T5=77:190:0.065945,T6=74:198:0.066195,T7=78:194:0.066318,T8=0:0:0.000000,T9=71:621:0.086853,T10=77:191:0.065411,T11=74:188:0.065245,T12=77:160:0.057377,T13=0:0:0.000000,T14=0:0:0.000000,T15=78:161:0.058841,T16=0:0:0.000000,T17=77:226:0.069220,T18=76:187:0.065501,T19=76:192:0.064389,T20=79:201:0.066293,T21=75:465:0.082101,T22=72:168:0.055895,T23=77:189:0.066177,T24=77:190:0.079753,T25=77:179:0.077935,T26=76:196:0.079401,T27=78:156:0.074511,T28=0:0:0.000000,T29=0:0:0.000000,T30=77:385:0.090340,T31=79:202:0.081519,T32=78:179:0.077869,T33=70:179:0.077895,T34=74:188:0.079598,T35=75:189:0.079247,T36=76:214:0.082734,T37=75:197:0.080485,T38=78:192:0.078156,T39=78:183:0.077634,T40=77:179:0.076335,T41=76:192:0.080526,T42=79:589:0.094729,T43=72:652:0.095173,T44=0:0:0.000000,T45=75:188:0.079996,T46=76:186:0.078909,T47=76:629:0.093641
+ROOTNODES,AB Par TT,position-endgame,3,48,0,240,256,270,261,279,292,272,249,257,280,263,668,463,724,239,234,237,266,268,285,268,303,272,268,242,262,267,257,267,272,256,263,264,269,264,540,692,705,273,264,233
+CUTOFFAT,AB Par TT,position-endgame,3,48,0,2815,5,7,0,10,30,1,66
+TTSTATS,AB Par TT,position-endgame,3,48,0,3125,13,2,3110,3112,0,13,0,15
+AB Par TT,position-endgame,3,48,1,-6420,I7/LeftUp/Push,0.656571,3111,9837,14,18.386,2933,178,T0=72:161:0.061959,T1=72:170:0.063224,T2=78:156:0.057532,T3=77:226:0.071319,T4=78:194:0.068155,T5=76:189:0.067089,T6=0:0:0.000000,T7=76:192:0.067466,T8=77:179:0.059557,T9=78:183:0.062770,T10=78:192:0.065123,T11=76:629:0.093191,T12=78:201:0.067928,T13=76:214:0.070132,T14=79:589:0.091855,T15=77:190:0.067083,T16=79:201:0.069489,T17=71:621:0.092443,T18=0:0:0.000000,T19=78:180:0.063091,T20=74:188:0.065256,T21=75:197:0.068422,T22=76:196:0.067472,T23=76:187:0.067302,T24=73:197:0.080853,T25=0:0:0.000000,T26=76:192:0.080009,T27=77:189:0.080505,T28=0:0:0.000000,T29=77:191:0.080907,T30=76:193:0.080499,T31=77:160:0.073957,T32=80:203:0.081795,T33=72:168:0.072215,T34=71:610:0.097138,T35=0:0:0.000000,T36=78:161:0.074634,T37=0:0:0.000000,T38=75:189:0.079130,T39=70:179:0.077667,T40=78:386:0.095002,T41=77:179:0.078078,T42=75:188:0.080064,T43=74:188:0.080452,T44=78:179:0.077914,T45=0:0:0.000000,T46=74:464:0.094534,T47=76:186:0.079311
+ROOTNODES,AB Par TT,position-endgame,3,48,1,240,256,270,261,279,292,272,249,257,280,263,668,464,682,239,234,237,266,268,286,268,303,272,268,242,262,266,258,267,272,256,263,264,269,264,539,692,705,272,264,233
+CUTOFFAT,AB Par TT,position-endgame,3,48,1,2815,5,7,0,10,30,1,65
+TTSTATS,AB Par TT,position-endgame,3,48,1,3125,14,2,3109,3111,0,14,0,16
+--- strategy=AB Par TT ID Asp Ord YBW pos=start threads=4
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=001 mask=1,49
+AFFINITY tid=003 mask=3,51
+AB Par TT ID Asp Ord YBW,start,3,4,0,66,A1/RightDown,1.018602,210,2578,0,0.000,159,51,T0=210:2578:0.000000,T1=0:0:0.000000,T2=0:0:0.000000,T3=0:0:0.000000
+ROOTNODES,AB Par TT ID Asp Ord YBW,start,3,4,0
+CUTOFFAT,AB Par TT ID Asp Ord YBW,start,3,4,0,153,0,2,0,0,1,0,3
+TTSTATS,AB Par TT ID Asp Ord YBW,start,3,4,0,210,0,46,164,210,0,0,0,0
+ASPSTATS,AB Par TT ID Asp Ord YBW,start,3,4,0,3,0,0,0
+AB Par TT ID Asp Ord YBW,start,3,4,1,66,A1/RightDown,0.170113,210,2578,0,0.000,159,51,T0=210:2578:0.000000,T1=0:0:0.000000,T2=0:0:0.000000,T3=0:0:0.000000
+ROOTNODES,AB Par TT ID Asp Ord YBW,start,3,4,1
+CUTOFFAT,AB Par TT ID Asp Ord YBW,start,3,4,1,153,0,2,0,0,1,0,3
+TTSTATS,AB Par TT ID Asp Ord YBW,start,3,4,1,210,0,46,164,210,0,0,0,0
+ASPSTATS,AB Par TT ID Asp Ord YBW,start,3,4,1,3,0,0,0
+--- strategy=AB Par TT ID Asp Ord YBW pos=start threads=16
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=004 mask=4,52
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=006 mask=6,54
+AFFINITY tid=007 mask=7,55
+AFFINITY tid=005 mask=5,53
+AFFINITY tid=003 mask=3,51
+AFFINITY tid=008 mask=8,56
+AFFINITY tid=014 mask=14,62
+AFFINITY tid=013 mask=13,61
+AFFINITY tid=009 mask=9,57
+AFFINITY tid=010 mask=10,58
+AFFINITY tid=015 mask=15,63
+AFFINITY tid=001 mask=1,49
+AFFINITY tid=012 mask=12,60
+AFFINITY tid=011 mask=11,59
+AB Par TT ID Asp Ord YBW,start,3,16,0,66,A1/RightDown,1.266223,210,2578,0,0.000,159,51,T0=46:140:0.000000,T1=0:0:0.000000,T2=0:0:0.000000,T3=0:0:0.000000,T4=0:0:0.000000,T5=0:0:0.000000,T6=0:0:0.000000,T7=0:0:0.000000,T8=0:0:0.000000,T9=0:0:0.000000,T10=0:0:0.000000,T11=0:0:0.000000,T12=164:2438:0.000000,T13=0:0:0.000000,T14=0:0:0.000000,T15=0:0:0.000000
+ROOTNODES,AB Par TT ID Asp Ord YBW,start,3,16,0
+CUTOFFAT,AB Par TT ID Asp Ord YBW,start,3,16,0,153,0,2,0,0,1,0,3
+TTSTATS,AB Par TT ID Asp Ord YBW,start,3,16,0,210,0,46,164,210,0,0,0,45
+ASPSTATS,AB Par TT ID Asp Ord YBW,start,3,16,0,3,0,0,0
+AB Par TT ID Asp Ord YBW,start,3,16,1,66,A1/RightDown,0.405541,210,2578,0,0.000,159,51,T0=210:2578:0.000000,T1=0:0:0.000000,T2=0:0:0.000000,T3=0:0:0.000000,T4=0:0:0.000000,T5=0:0:0.000000,T6=0:0:0.000000,T7=0:0:0.000000,T8=0:0:0.000000,T9=0:0:0.000000,T10=0:0:0.000000,T11=0:0:0.000000,T12=0:0:0.000000,T13=0:0:0.000000,T14=0:0:0.000000,T15=0:0:0.000000
+ROOTNODES,AB Par TT ID Asp Ord YBW,start,3,16,1
+CUTOFFAT,AB Par TT ID Asp Ord YBW,start,3,16,1,153,0,2,0,0,1,0,3
+TTSTATS,AB Par TT ID Asp Ord YBW,start,3,16,1,210,0,46,164,210,0,0,0,0
+ASPSTATS,AB Par TT ID Asp Ord YBW,start,3,16,1,3,0,0,0
+--- strategy=AB Par TT ID Asp Ord YBW pos=start threads=48
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=018 mask=18,66
+AFFINITY tid=004 mask=4,52
+AFFINITY tid=016 mask=16,64
+AFFINITY tid=019 mask=19,67
+AFFINITY tid=045 mask=45,93
+AFFINITY tid=046 mask=46,94
+AFFINITY tid=047 mask=47,95
+AFFINITY tid=015 mask=15,63
+AFFINITY tid=020 mask=20,68
+AFFINITY tid=013 mask=13,61
+AFFINITY tid=014 mask=14,62
+AFFINITY tid=008 mask=8,56
+AFFINITY tid=017 mask=17,65
+AFFINITY tid=022 mask=22,70
+AFFINITY tid=012 mask=12,60
+AFFINITY tid=003 mask=3,51
+AFFINITY tid=040 mask=40,88
+AFFINITY tid=009 mask=9,57
+AFFINITY tid=036 mask=36,84
+AFFINITY tid=044 mask=44,92
+AFFINITY tid=005 mask=5,53
+AFFINITY tid=024 mask=24,72
+AFFINITY tid=042 mask=42,90
+AFFINITY tid=043 mask=43,91
+AFFINITY tid=039 mask=39,87
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=031 mask=31,79
+AFFINITY tid=001 mask=1,49
+AFFINITY tid=029 mask=29,77
+AFFINITY tid=027 mask=27,75
+AFFINITY tid=006 mask=6,54
+AFFINITY tid=007 mask=7,55
+AFFINITY tid=010 mask=10,58
+AFFINITY tid=034 mask=34,82
+AFFINITY tid=038 mask=38,86
+AFFINITY tid=028 mask=28,76
+AFFINITY tid=033 mask=33,81
+AFFINITY tid=021 mask=21,69
+AFFINITY tid=032 mask=32,80
+AFFINITY tid=023 mask=23,71
+AFFINITY tid=035 mask=35,83
+AFFINITY tid=030 mask=30,78
+AFFINITY tid=026 mask=26,74
+AFFINITY tid=025 mask=25,73
+AFFINITY tid=011 mask=11,59
+AFFINITY tid=037 mask=37,85
+AFFINITY tid=041 mask=41,89
+AB Par TT ID Asp Ord YBW,start,3,48,0,66,A1/RightDown,1.469402,210,2578,0,0.000,159,51,T0=1:44:0.000000,T1=45:96:0.000000,T2=0:0:0.000000,T3=0:0:0.000000,T4=0:0:0.000000,T5=0:0:0.000000,T6=0:0:0.000000,T7=0:0:0.000000,T8=0:0:0.000000,T9=0:0:0.000000,T10=0:0:0.000000,T11=0:0:0.000000,T12=0:0:0.000000,T13=0:0:0.000000,T14=0:0:0.000000,T15=0:0:0.000000,T16=0:0:0.000000,T17=0:0:0.000000,T18=0:0:0.000000,T19=0:0:0.000000,T20=0:0:0.000000,T21=0:0:0.000000,T22=0:0:0.000000,T23=0:0:0.000000,T24=0:0:0.000000,T25=0:0:0.000000,T26=0:0:0.000000,T27=0:0:0.000000,T28=0:0:0.000000,T29=0:0:0.000000,T30=0:0:0.000000,T31=0:0:0.000000,T32=0:0:0.000000,T33=0:0:0.000000,T34=0:0:0.000000,T35=0:0:0.000000,T36=0:0:0.000000,T37=0:0:0.000000,T38=0:0:0.000000,T39=0:0:0.000000,T40=0:0:0.000000,T41=0:0:0.000000,T42=0:0:0.000000,T43=0:0:0.000000,T44=0:0:0.000000,T45=0:0:0.000000,T46=0:0:0.000000,T47=164:2438:0.000000
+ROOTNODES,AB Par TT ID Asp Ord YBW,start,3,48,0
+CUTOFFAT,AB Par TT ID Asp Ord YBW,start,3,48,0,153,0,2,0,0,1,0,3
+TTSTATS,AB Par TT ID Asp Ord YBW,start,3,48,0,210,0,46,164,210,0,0,0,46
+ASPSTATS,AB Par TT ID Asp Ord YBW,start,3,48,0,3,0,0,0
+AB Par TT ID Asp Ord YBW,start,3,48,1,66,A1/RightDown,0.591702,210,2578,0,0.000,159,51,T0=210:2578:0.000000,T1=0:0:0.000000,T2=0:0:0.000000,T3=0:0:0.000000,T4=0:0:0.000000,T5=0:0:0.000000,T6=0:0:0.000000,T7=0:0:0.000000,T8=0:0:0.000000,T9=0:0:0.000000,T10=0:0:0.000000,T11=0:0:0.000000,T12=0:0:0.000000,T13=0:0:0.000000,T14=0:0:0.000000,T15=0:0:0.000000,T16=0:0:0.000000,T17=0:0:0.000000,T18=0:0:0.000000,T19=0:0:0.000000,T20=0:0:0.000000,T21=0:0:0.000000,T22=0:0:0.000000,T23=0:0:0.000000,T24=0:0:0.000000,T25=0:0:0.000000,T26=0:0:0.000000,T27=0:0:0.000000,T28=0:0:0.000000,T29=0:0:0.000000,T30=0:0:0.000000,T31=0:0:0.000000,T32=0:0:0.000000,T33=0:0:0.000000,T34=0:0:0.000000,T35=0:0:0.000000,T36=0:0:0.000000,T37=0:0:0.000000,T38=0:0:0.000000,T39=0:0:0.000000,T40=0:0:0.000000,T41=0:0:0.000000,T42=0:0:0.000000,T43=0:0:0.000000,T44=0:0:0.000000,T45=0:0:0.000000,T46=0:0:0.000000,T47=0:0:0.000000
+ROOTNODES,AB Par TT ID Asp Ord YBW,start,3,48,1
+CUTOFFAT,AB Par TT ID Asp Ord YBW,start,3,48,1,153,0,2,0,0,1,0,3
+TTSTATS,AB Par TT ID Asp Ord YBW,start,3,48,1,210,0,46,164,210,0,0,0,0
+ASPSTATS,AB Par TT ID Asp Ord YBW,start,3,48,1,3,0,0,0
+--- strategy=AB Par TT ID Asp Ord YBW pos=position-midgame1 threads=4
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=003 mask=3,51
+AFFINITY tid=001 mask=1,49
+AB Par TT ID Asp Ord YBW,position-midgame1,3,4,0,-163,F3-G4/Left,1.065816,345,5758,0,0.000,261,84,T0=345:5758:0.000000,T1=0:0:0.000000,T2=0:0:0.000000,T3=0:0:0.000000
+ROOTNODES,AB Par TT ID Asp Ord YBW,position-midgame1,3,4,0
+CUTOFFAT,AB Par TT ID Asp Ord YBW,position-midgame1,3,4,0,245,8,0,0,1,0,0,7
+TTSTATS,AB Par TT ID Asp Ord YBW,position-midgame1,3,4,0,345,0,73,272,345,0,0,0,0
+ASPSTATS,AB Par TT ID Asp Ord YBW,position-midgame1,3,4,0,3,0,0,0
+AB Par TT ID Asp Ord YBW,position-midgame1,3,4,1,-163,F3-G4/Left,0.215512,345,5758,0,0.000,261,84,T0=345:5758:0.000000,T1=0:0:0.000000,T2=0:0:0.000000,T3=0:0:0.000000
+ROOTNODES,AB Par TT ID Asp Ord YBW,position-midgame1,3,4,1
+CUTOFFAT,AB Par TT ID Asp Ord YBW,position-midgame1,3,4,1,245,8,0,0,1,0,0,7
+TTSTATS,AB Par TT ID Asp Ord YBW,position-midgame1,3,4,1,345,0,73,272,345,0,0,0,0
+ASPSTATS,AB Par TT ID Asp Ord YBW,position-midgame1,3,4,1,3,0,0,0
+--- strategy=AB Par TT ID Asp Ord YBW pos=position-midgame1 threads=16
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=004 mask=4,52
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=006 mask=6,54
+AFFINITY tid=008 mask=8,56
+AFFINITY tid=003 mask=3,51
+AFFINITY tid=007 mask=7,55
+AFFINITY tid=005 mask=5,53
+AFFINITY tid=001 mask=1,49
+AFFINITY tid=014 mask=14,62
+AFFINITY tid=015 mask=15,63
+AFFINITY tid=013 mask=13,61
+AFFINITY tid=012 mask=12,60
+AFFINITY tid=009 mask=9,57
+AFFINITY tid=010 mask=10,58
+AFFINITY tid=011 mask=11,59
+AB Par TT ID Asp Ord YBW,position-midgame1,3,16,0,-163,F3-G4/Left,1.310690,345,5758,0,0.000,261,84,T0=73:279:0.000000,T1=0:0:0.000000,T2=0:0:0.000000,T3=0:0:0.000000,T4=0:0:0.000000,T5=0:0:0.000000,T6=0:0:0.000000,T7=0:0:0.000000,T8=0:0:0.000000,T9=0:0:0.000000,T10=0:0:0.000000,T11=0:0:0.000000,T12=0:0:0.000000,T13=0:0:0.000000,T14=272:5479:0.000000,T15=0:0:0.000000
+ROOTNODES,AB Par TT ID Asp Ord YBW,position-midgame1,3,16,0
+CUTOFFAT,AB Par TT ID Asp Ord YBW,position-midgame1,3,16,0,245,8,0,0,1,0,0,7
+TTSTATS,AB Par TT ID Asp Ord YBW,position-midgame1,3,16,0,345,0,73,272,345,0,0,0,72
+ASPSTATS,AB Par TT ID Asp Ord YBW,position-midgame1,3,16,0,3,0,0,0
+AB Par TT ID Asp Ord YBW,position-midgame1,3,16,1,-163,F3-G4/Left,0.455954,345,5758,0,0.000,261,84,T0=73:279:0.000000,T1=0:0:0.000000,T2=0:0:0.000000,T3=0:0:0.000000,T4=0:0:0.000000,T5=0:0:0.000000,T6=0:0:0.000000,T7=0:0:0.000000,T8=272:5479:0.000000,T9=0:0:0.000000,T10=0:0:0.000000,T11=0:0:0.000000,T12=0:0:0.000000,T13=0:0:0.000000,T14=0:0:0.000000,T15=0:0:0.000000
+ROOTNODES,AB Par TT ID Asp Ord YBW,position-midgame1,3,16,1
+CUTOFFAT,AB Par TT ID Asp Ord YBW,position-midgame1,3,16,1,245,8,0,0,1,0,0,7
+TTSTATS,AB Par TT ID Asp Ord YBW,position-midgame1,3,16,1,345,0,73,272,345,0,0,0,72
+ASPSTATS,AB Par TT ID Asp Ord YBW,position-midgame1,3,16,1,3,0,0,0
+--- strategy=AB Par TT ID Asp Ord YBW pos=position-midgame1 threads=48
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=004 mask=4,52
+AFFINITY tid=013 mask=13,61
+AFFINITY tid=014 mask=14,62
+AFFINITY tid=015 mask=15,63
+AFFINITY tid=020 mask=20,68
+AFFINITY tid=018 mask=18,66
+AFFINITY tid=016 mask=16,64
+AFFINITY tid=045 mask=45,93
+AFFINITY tid=047 mask=47,95
+AFFINITY tid=019 mask=19,67
+AFFINITY tid=017 mask=17,65
+AFFINITY tid=034 mask=34,82
+AFFINITY tid=046 mask=46,94
+AFFINITY tid=039 mask=39,87
+AFFINITY tid=022 mask=22,70
+AFFINITY tid=006 mask=6,54
+AFFINITY tid=042 mask=42,90
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=027 mask=27,75
+AFFINITY tid=012 mask=12,60
+AFFINITY tid=007 mask=7,55
+AFFINITY tid=023 mask=23,71
+AFFINITY tid=009 mask=9,57
+AFFINITY tid=030 mask=30,78
+AFFINITY tid=024 mask=24,72
+AFFINITY tid=044 mask=44,92
+AFFINITY tid=008 mask=8,56
+AFFINITY tid=010 mask=10,58
+AFFINITY tid=001 mask=1,49
+AFFINITY tid=011 mask=11,59
+AFFINITY tid=033 mask=33,81
+AFFINITY tid=035 mask=35,83
+AFFINITY tid=032 mask=32,80
+AFFINITY tid=036 mask=36,84
+AFFINITY tid=031 mask=31,79
+AFFINITY tid=005 mask=5,53
+AFFINITY tid=040 mask=40,88
+AFFINITY tid=003 mask=3,51
+AFFINITY tid=037 mask=37,85
+AFFINITY tid=043 mask=43,91
+AFFINITY tid=029 mask=29,77
+AFFINITY tid=038 mask=38,86
+AFFINITY tid=041 mask=41,89
+AFFINITY tid=021 mask=21,69
+AFFINITY tid=028 mask=28,76
+AFFINITY tid=025 mask=25,73
+AFFINITY tid=026 mask=26,74
+AB Par TT ID Asp Ord YBW,position-midgame1,3,48,0,-163,F3-G4/Left,1.521166,345,5758,0,0.000,261,84,T0=345:5758:0.000000,T1=0:0:0.000000,T2=0:0:0.000000,T3=0:0:0.000000,T4=0:0:0.000000,T5=0:0:0.000000,T6=0:0:0.000000,T7=0:0:0.000000,T8=0:0:0.000000,T9=0:0:0.000000,T10=0:0:0.000000,T11=0:0:0.000000,T12=0:0:0.000000,T13=0:0:0.000000,T14=0:0:0.000000,T15=0:0:0.000000,T16=0:0:0.000000,T17=0:0:0.000000,T18=0:0:0.000000,T19=0:0:0.000000,T20=0:0:0.000000,T21=0:0:0.000000,T22=0:0:0.000000,T23=0:0:0.000000,T24=0:0:0.000000,T25=0:0:0.000000,T26=0:0:0.000000,T27=0:0:0.000000,T28=0:0:0.000000,T29=0:0:0.000000,T30=0:0:0.000000,T31=0:0:0.000000,T32=0:0:0.000000,T33=0:0:0.000000,T34=0:0:0.000000,T35=0:0:0.000000,T36=0:0:0.000000,T37=0:0:0.000000,T38=0:0:0.000000,T39=0:0:0.000000,T40=0:0:0.000000,T41=0:0:0.000000,T42=0:0:0.000000,T43=0:0:0.000000,T44=0:0:0.000000,T45=0:0:0.000000,T46=0:0:0.000000,T47=0:0:0.000000
+ROOTNODES,AB Par TT ID Asp Ord YBW,position-midgame1,3,48,0
+CUTOFFAT,AB Par TT ID Asp Ord YBW,position-midgame1,3,48,0,245,8,0,0,1,0,0,7
+TTSTATS,AB Par TT ID Asp Ord YBW,position-midgame1,3,48,0,345,0,73,272,345,0,0,0,0
+ASPSTATS,AB Par TT ID Asp Ord YBW,position-midgame1,3,48,0,3,0,0,0
+AB Par TT ID Asp Ord YBW,position-midgame1,3,48,1,-163,F3-G4/Left,0.650873,345,5758,0,0.000,261,84,T0=345:5758:0.000000,T1=0:0:0.000000,T2=0:0:0.000000,T3=0:0:0.000000,T4=0:0:0.000000,T5=0:0:0.000000,T6=0:0:0.000000,T7=0:0:0.000000,T8=0:0:0.000000,T9=0:0:0.000000,T10=0:0:0.000000,T11=0:0:0.000000,T12=0:0:0.000000,T13=0:0:0.000000,T14=0:0:0.000000,T15=0:0:0.000000,T16=0:0:0.000000,T17=0:0:0.000000,T18=0:0:0.000000,T19=0:0:0.000000,T20=0:0:0.000000,T21=0:0:0.000000,T22=0:0:0.000000,T23=0:0:0.000000,T24=0:0:0.000000,T25=0:0:0.000000,T26=0:0:0.000000,T27=0:0:0.000000,T28=0:0:0.000000,T29=0:0:0.000000,T30=0:0:0.000000,T31=0:0:0.000000,T32=0:0:0.000000,T33=0:0:0.000000,T34=0:0:0.000000,T35=0:0:0.000000,T36=0:0:0.000000,T37=0:0:0.000000,T38=0:0:0.000000,T39=0:0:0.000000,T40=0:0:0.000000,T41=0:0:0.000000,T42=0:0:0.000000,T43=0:0:0.000000,T44=0:0:0.000000,T45=0:0:0.000000,T46=0:0:0.000000,T47=0:0:0.000000
+ROOTNODES,AB Par TT ID Asp Ord YBW,position-midgame1,3,48,1
+CUTOFFAT,AB Par TT ID Asp Ord YBW,position-midgame1,3,48,1,245,8,0,0,1,0,0,7
+TTSTATS,AB Par TT ID Asp Ord YBW,position-midgame1,3,48,1,345,0,73,272,345,0,0,0,0
+ASPSTATS,AB Par TT ID Asp Ord YBW,position-midgame1,3,48,1,3,0,0,0
+--- strategy=AB Par TT ID Asp Ord YBW pos=position-endgame threads=4
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=001 mask=1,49
+AFFINITY tid=003 mask=3,51
+AB Par TT ID Asp Ord YBW,position-endgame,3,4,0,-6420,I7/LeftUp/Push,1.002833,198,1780,40,0.000,151,47,T0=197:1739:0.000000,T1=0:0:0.000000,T2=1:41:0.000000,T3=0:0:0.000000
+ROOTNODES,AB Par TT ID Asp Ord YBW,position-endgame,3,4,0
+CUTOFFAT,AB Par TT ID Asp Ord YBW,position-endgame,3,4,0,151,0,0,0,0,0,0,0
+TTSTATS,AB Par TT ID Asp Ord YBW,position-endgame,3,4,0,238,40,45,153,198,0,40,0,1
+ASPSTATS,AB Par TT ID Asp Ord YBW,position-endgame,3,4,0,3,0,1,113
+AB Par TT ID Asp Ord YBW,position-endgame,3,4,1,-6420,I7/LeftUp/Push,0.155474,198,1780,40,0.000,151,47,T0=198:1780:0.000000,T1=0:0:0.000000,T2=0:0:0.000000,T3=0:0:0.000000
+ROOTNODES,AB Par TT ID Asp Ord YBW,position-endgame,3,4,1
+CUTOFFAT,AB Par TT ID Asp Ord YBW,position-endgame,3,4,1,151,0,0,0,0,0,0,0
+TTSTATS,AB Par TT ID Asp Ord YBW,position-endgame,3,4,1,238,40,45,153,198,0,40,0,0
+ASPSTATS,AB Par TT ID Asp Ord YBW,position-endgame,3,4,1,3,0,1,113
+--- strategy=AB Par TT ID Asp Ord YBW pos=position-endgame threads=16
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=004 mask=4,52
+AFFINITY tid=006 mask=6,54
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=008 mask=8,56
+AFFINITY tid=003 mask=3,51
+AFFINITY tid=005 mask=5,53
+AFFINITY tid=007 mask=7,55
+AFFINITY tid=009 mask=9,57
+AFFINITY tid=014 mask=14,62
+AFFINITY tid=001 mask=1,49
+AFFINITY tid=015 mask=15,63
+AFFINITY tid=013 mask=13,61
+AFFINITY tid=012 mask=12,60
+AFFINITY tid=010 mask=10,58
+AFFINITY tid=011 mask=11,59
+AB Par TT ID Asp Ord YBW,position-endgame,3,16,0,-6420,I7/LeftUp/Push,1.251246,198,1780,40,0.000,151,47,T0=197:1739:0.000000,T1=0:0:0.000000,T2=1:41:0.000000,T3=0:0:0.000000,T4=0:0:0.000000,T5=0:0:0.000000,T6=0:0:0.000000,T7=0:0:0.000000,T8=0:0:0.000000,T9=0:0:0.000000,T10=0:0:0.000000,T11=0:0:0.000000,T12=0:0:0.000000,T13=0:0:0.000000,T14=0:0:0.000000,T15=0:0:0.000000
+ROOTNODES,AB Par TT ID Asp Ord YBW,position-endgame,3,16,0
+CUTOFFAT,AB Par TT ID Asp Ord YBW,position-endgame,3,16,0,151,0,0,0,0,0,0,0
+TTSTATS,AB Par TT ID Asp Ord YBW,position-endgame,3,16,0,238,40,45,153,198,0,40,0,1
+ASPSTATS,AB Par TT ID Asp Ord YBW,position-endgame,3,16,0,3,0,1,113
+AB Par TT ID Asp Ord YBW,position-endgame,3,16,1,-6420,I7/LeftUp/Push,0.390172,198,1780,40,0.000,151,47,T0=198:1780:0.000000,T1=0:0:0.000000,T2=0:0:0.000000,T3=0:0:0.000000,T4=0:0:0.000000,T5=0:0:0.000000,T6=0:0:0.000000,T7=0:0:0.000000,T8=0:0:0.000000,T9=0:0:0.000000,T10=0:0:0.000000,T11=0:0:0.000000,T12=0:0:0.000000,T13=0:0:0.000000,T14=0:0:0.000000,T15=0:0:0.000000
+ROOTNODES,AB Par TT ID Asp Ord YBW,position-endgame,3,16,1
+CUTOFFAT,AB Par TT ID Asp Ord YBW,position-endgame,3,16,1,151,0,0,0,0,0,0,0
+TTSTATS,AB Par TT ID Asp Ord YBW,position-endgame,3,16,1,238,40,45,153,198,0,40,0,0
+ASPSTATS,AB Par TT ID Asp Ord YBW,position-endgame,3,16,1,3,0,1,113
+--- strategy=AB Par TT ID Asp Ord YBW pos=position-endgame threads=48
+Warning: please export TSAN_OPTIONS='ignore_noninstrumented_modules=1' to avoid false positive reports from the OpenMP runtime!
+AFFINITY tid=000 mask=0,48
+AFFINITY tid=004 mask=4,52
+AFFINITY tid=018 mask=18,66
+AFFINITY tid=047 mask=47,95
+AFFINITY tid=015 mask=15,63
+AFFINITY tid=016 mask=16,64
+AFFINITY tid=046 mask=46,94
+AFFINITY tid=002 mask=2,50
+AFFINITY tid=006 mask=6,54
+AFFINITY tid=045 mask=45,93
+AFFINITY tid=020 mask=20,68
+AFFINITY tid=014 mask=14,62
+AFFINITY tid=003 mask=3,51
+AFFINITY tid=017 mask=17,65
+AFFINITY tid=012 mask=12,60
+AFFINITY tid=013 mask=13,61
+AFFINITY tid=019 mask=19,67
+AFFINITY tid=024 mask=24,72
+AFFINITY tid=008 mask=8,56
+AFFINITY tid=007 mask=7,55
+AFFINITY tid=022 mask=22,70
+AFFINITY tid=039 mask=39,87
+AFFINITY tid=030 mask=30,78
+AFFINITY tid=038 mask=38,86
+AFFINITY tid=032 mask=32,80
+AFFINITY tid=001 mask=1,49
+AFFINITY tid=042 mask=42,90
+AFFINITY tid=005 mask=5,53
+AFFINITY tid=009 mask=9,57
+AFFINITY tid=034 mask=34,82
+AFFINITY tid=043 mask=43,91
+AFFINITY tid=010 mask=10,58
+AFFINITY tid=037 mask=37,85
+AFFINITY tid=040 mask=40,88
+AFFINITY tid=044 mask=44,92
+AFFINITY tid=029 mask=29,77
+AFFINITY tid=036 mask=36,84
+AFFINITY tid=025 mask=25,73
+AFFINITY tid=041 mask=41,89
+AFFINITY tid=023 mask=23,71
+AFFINITY tid=027 mask=27,75
+AFFINITY tid=035 mask=35,83
+AFFINITY tid=031 mask=31,79
+AFFINITY tid=033 mask=33,81
+AFFINITY tid=026 mask=26,74
+AFFINITY tid=028 mask=28,76
+AFFINITY tid=011 mask=11,59
+AFFINITY tid=021 mask=21,69
+AB Par TT ID Asp Ord YBW,position-endgame,3,48,0,-6420,I7/LeftUp/Push,1.472470,198,1780,40,0.000,151,47,T0=198:1780:0.000000,T1=0:0:0.000000,T2=0:0:0.000000,T3=0:0:0.000000,T4=0:0:0.000000,T5=0:0:0.000000,T6=0:0:0.000000,T7=0:0:0.000000,T8=0:0:0.000000,T9=0:0:0.000000,T10=0:0:0.000000,T11=0:0:0.000000,T12=0:0:0.000000,T13=0:0:0.000000,T14=0:0:0.000000,T15=0:0:0.000000,T16=0:0:0.000000,T17=0:0:0.000000,T18=0:0:0.000000,T19=0:0:0.000000,T20=0:0:0.000000,T21=0:0:0.000000,T22=0:0:0.000000,T23=0:0:0.000000,T24=0:0:0.000000,T25=0:0:0.000000,T26=0:0:0.000000,T27=0:0:0.000000,T28=0:0:0.000000,T29=0:0:0.000000,T30=0:0:0.000000,T31=0:0:0.000000,T32=0:0:0.000000,T33=0:0:0.000000,T34=0:0:0.000000,T35=0:0:0.000000,T36=0:0:0.000000,T37=0:0:0.000000,T38=0:0:0.000000,T39=0:0:0.000000,T40=0:0:0.000000,T41=0:0:0.000000,T42=0:0:0.000000,T43=0:0:0.000000,T44=0:0:0.000000,T45=0:0:0.000000,T46=0:0:0.000000,T47=0:0:0.000000
+ROOTNODES,AB Par TT ID Asp Ord YBW,position-endgame,3,48,0
+CUTOFFAT,AB Par TT ID Asp Ord YBW,position-endgame,3,48,0,151,0,0,0,0,0,0,0
+TTSTATS,AB Par TT ID Asp Ord YBW,position-endgame,3,48,0,238,40,45,153,198,0,40,0,0
+ASPSTATS,AB Par TT ID Asp Ord YBW,position-endgame,3,48,0,3,0,1,113
+AB Par TT ID Asp Ord YBW,position-endgame,3,48,1,-6420,I7/LeftUp/Push,0.592708,198,1780,40,0.000,151,47,T0=198:1780:0.000000,T1=0:0:0.000000,T2=0:0:0.000000,T3=0:0:0.000000,T4=0:0:0.000000,T5=0:0:0.000000,T6=0:0:0.000000,T7=0:0:0.000000,T8=0:0:0.000000,T9=0:0:0.000000,T10=0:0:0.000000,T11=0:0:0.000000,T12=0:0:0.000000,T13=0:0:0.000000,T14=0:0:0.000000,T15=0:0:0.000000,T16=0:0:0.000000,T17=0:0:0.000000,T18=0:0:0.000000,T19=0:0:0.000000,T20=0:0:0.000000,T21=0:0:0.000000,T22=0:0:0.000000,T23=0:0:0.000000,T24=0:0:0.000000,T25=0:0:0.000000,T26=0:0:0.000000,T27=0:0:0.000000,T28=0:0:0.000000,T29=0:0:0.000000,T30=0:0:0.000000,T31=0:0:0.000000,T32=0:0:0.000000,T33=0:0:0.000000,T34=0:0:0.000000,T35=0:0:0.000000,T36=0:0:0.000000,T37=0:0:0.000000,T38=0:0:0.000000,T39=0:0:0.000000,T40=0:0:0.000000,T41=0:0:0.000000,T42=0:0:0.000000,T43=0:0:0.000000,T44=0:0:0.000000,T45=0:0:0.000000,T46=0:0:0.000000,T47=0:0:0.000000
+ROOTNODES,AB Par TT ID Asp Ord YBW,position-endgame,3,48,1
+CUTOFFAT,AB Par TT ID Asp Ord YBW,position-endgame,3,48,1,151,0,0,0,0,0,0,0
+TTSTATS,AB Par TT ID Asp Ord YBW,position-endgame,3,48,1,238,40,45,153,198,0,40,0,0
+ASPSTATS,AB Par TT ID Asp Ord YBW,position-endgame,3,48,1,3,0,1,113

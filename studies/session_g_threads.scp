@@ -1,0 +1,90 @@
+#!/bin/bash
+# session G: thread sweep, this is what decides the wait concept
+# interactive:  DEPTH=5 ./studies/session_g_threads.scp
+# batch:        sbatch --export=ALL,DEPTH=5 studies/session_g_threads.scp
+# !!! two positions only, the low thread counts are what cost the time and the
+# whole point is reaching 48 in one session
+#SBATCH -J abG
+#SBATCH -o studies/results/slurm_%x_%j.out
+#SBATCH -e studies/results/slurm_%x_%j.out
+#SBATCH --account=<project>
+#SBATCH --partition=micro
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=48
+#SBATCH --hint=nomultithread
+#SBATCH --exclusive
+#SBATCH --time=00:30:00
+#SBATCH --ear=off
+
+set -uo pipefail
+SESSION=G_threads
+. "$(dirname "$0")/common.sh"
+
+DEPTH="${DEPTH:-5}"
+REPS="${REPS:-3}"
+POSITIONS="${POSITIONS:-position-midgame1 position-endgame}"
+THREADLIST="${THREADLIST:-1 2 4 8 16 24 32 48}"
+
+# the versions where thread count is the question: plain root splitting, the top of
+# the ladder with and without the wait concept, and the wait concept alone
+SWEEP="AB Parallel|AB Par TT ID Asp Ord|AB Par TT ID Asp Ord YBW|AB Par YBW"
+
+BUDGET="${BUDGET:-1500}"
+T0=$SECONDS
+budget_left() {
+    if [ $((SECONDS - T0)) -ge "$BUDGET" ]; then
+        echo "BUDGET REACHED after $((SECONDS - T0))s, did not start: $*"
+        return 1
+    fi
+    return 0
+}
+
+run() { OMP_NUM_THREADS=$1 $RUNNER "$BIN/abtest" "$2" "$3" "$4" "$5" | grep -v AFFINITY; }
+
+IFS='|' read -ra SW <<< "$SWEEP"
+
+echo "depth=$DEPTH reps=$REPS budget=${BUDGET}s"
+echo "positions: $POSITIONS"
+echo "threads: $THREADLIST"
+echo "csv: strategy,position,depth,threads,repeat,value,move,secs,interior,leaf,ttcut,ceiling,cutoffs,searched"
+echo
+
+# !!! high thread counts first, if the budget runs out the expensive low counts
+# are what is missing, and those are the least interesting end of the curve
+echo "=== G1 thread sweep, descending so the useful end lands first"
+for s in "${SW[@]}"; do
+  for pos in $POSITIONS; do
+    for t in $(echo "$THREADLIST" | tr ' ' '\n' | sort -rn); do
+      budget_left "G1 $s $pos t$t" || break 3
+      run "$t" "$s" "$pos" "$DEPTH" "$REPS"
+    done
+  done
+done
+echo
+
+# close against spread at one thread count, the only reading that separates
+# socket placement from thread count
+echo "=== G2 placement at 24 threads"
+for bind in close spread; do
+  for s in "${SW[@]}"; do
+    for pos in $POSITIONS; do
+      budget_left "G2 $bind $s $pos" || break 3
+      OMP_PROC_BIND=$bind OMP_NUM_THREADS=24 $RUNNER "$BIN/abtest" "$s" "$pos" "$DEPTH" "$REPS" \
+        | grep -v AFFINITY | sed "s/^/BIND_$bind,/"
+    done
+  done
+done
+
+echo
+echo "=== G3 the masks actually granted"
+for t in 24 48; do
+  for bind in close spread; do
+    echo "--- bind=$bind threads=$t"
+    OMP_PROC_BIND=$bind OMP_NUM_THREADS=$t $RUNNER "$BIN/abtest" \
+      "AB Par TT ID Asp Ord" position-midgame1 3 1 | grep AFFINITY | sort -u | head -50
+  done
+done
+
+echo
+echo "=== session G done after $((SECONDS - T0))s"

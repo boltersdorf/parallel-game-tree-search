@@ -1,0 +1,152 @@
+#!/bin/bash
+# session A: correctness at scale, and the working depth
+# !!! nothing gets measured before this is green
+#SBATCH -J ab_sA
+#SBATCH -o studies/results/slurm_%x_%j.out
+#SBATCH -e studies/results/slurm_%x_%j.out
+#SBATCH --account=<project>
+#SBATCH --partition=micro
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=48
+#SBATCH --hint=nomultithread
+#SBATCH --exclusive
+#SBATCH --time=00:30:00
+#SBATCH --ear=off
+
+set -uo pipefail
+SESSION=A_oracle
+. "$(dirname "$0")/common.sh"
+
+POSITIONS="start position-midgame1 position-midgame2 position-endgame"
+
+# !!! minmax has no pruning, so a depth costs about 50x the one below it
+# depth 5 minmax is ~8 min at the start position and worse in the midgames,
+# which does not fit an allocation, the value equality is already shown at 3
+# and 4, so minmax stops there
+AB_DEPTHS="${AB_DEPTHS:-3 4 5}"
+MM_DEPTHS="${MM_DEPTHS:-3 4}"
+CAL_DEPTHS="${CAL_DEPTHS:-5 6}"
+TIMEOUT="${TIMEOUT:-300}"
+
+# A1 gates the baseline, A4 the ladder, gate the ladder alone with PARTS=A4
+PARTS="${PARTS:-A1 A2 A3 A4}"
+has() { case " $PARTS " in *" $1 "*) return 0;; *) return 1;; esac; }
+
+BUDGET="${BUDGET:-1500}"
+T0=$SECONDS
+budget_left() {
+    if [ $((SECONDS - T0)) -ge "$BUDGET" ]; then
+        echo "BUDGET REACHED after $((SECONDS - T0))s, did not start: $*"
+        return 1
+    fi
+    return 0
+}
+
+fail=0
+if has A1; then
+echo "=== A1 parallel value against the sequential oracle"
+for pos in $POSITIONS; do
+  for d in $AB_DEPTHS; do
+    ref=$(OMP_NUM_THREADS=1 $RUNNER "$BIN/abtest" "AB Seq Oracle" "$pos" "$d" 1 \
+            | grep -vE 'AFFINITY|^ROOTNODES|^CUTOFFAT' | cut -d, -f6)
+    for t in 1 2 4 8 16 24 32 48; do
+      vals=$(OMP_NUM_THREADS=$t $RUNNER "$BIN/abtest" "AB Parallel" "$pos" "$d" 5 \
+               | grep -vE 'AFFINITY|^ROOTNODES|^CUTOFFAT' | cut -d, -f6 | sort -u)
+      n=$(echo "$vals" | wc -l | tr -d ' ')
+      if [ "$n" != "1" ] || [ "$vals" != "$ref" ]; then
+        echo "FAIL $pos d$d t$t -> $(echo $vals | tr '\n' ' ') oracle $ref"
+        fail=$((fail+1))
+      else
+        echo "PASS $pos d$d t$t value $ref (5 repeats)"
+      fi
+    done
+  done
+done
+echo "A1 failures: $fail"
+fi
+echo
+
+if has A2; then
+echo "=== A2 minmax and alpha/beta on the same position, same value expected"
+echo "strategy,position,depth,threads,repeat,value,move,secs,interior,leaf"
+for pos in $POSITIONS; do
+  for d in $MM_DEPTHS; do
+    OMP_NUM_THREADS=1 $RUNNER "$BIN/abtest" "Minmax Seq Oracle" "$pos" "$d" 1 | grep -v AFFINITY
+    OMP_NUM_THREADS=1 $RUNNER "$BIN/abtest" "AB Seq Oracle"     "$pos" "$d" 1 | grep -v AFFINITY
+  done
+done
+fi
+echo
+
+if has A3; then
+echo "=== A3 sequential time per depth, this picks the working depth"
+echo "strategy,position,depth,threads,repeat,value,move,secs,interior,leaf"
+for pos in $POSITIONS; do
+  for d in $CAL_DEPTHS; do
+    OMP_NUM_THREADS=1 timeout "$TIMEOUT" $RUNNER "$BIN/abtest" "AB Seq Oracle" "$pos" "$d" 1 \
+      | grep -v AFFINITY || echo "TIMEOUT $pos d$d"
+  done
+done
+fi
+
+echo
+
+if has A4; then
+echo "=== A4 the optimization ladder against the same oracle"
+
+EQ_BIN="$BIN/abtest-eq"
+if [ ! -x "$EQ_BIN" ]; then
+  echo "no $EQ_BIN yet, building the equal depth twin"
+  "$AN/build.sh" -eq -DTT_DEPTH_EQ || {
+    echo "ERROR: equal depth build failed, see the compiler output above"; exit 1; }
+fi
+
+EXACT="AB Par Ord|AB Par YBW"
+TWINS="AB Par TT EqDepth|AB Par TT ID EqDepth|AB Par TT ID Asp EqDepth|AB Par TT ID Asp Ord EqDepth|AB Par TT ID Asp Ord YBW EqDepth"
+
+LADDER_DEPTHS="${LADDER_DEPTHS:-3 4}"
+LADDER_THREADS="${LADDER_THREADS:-1 8 24 48}"
+lfail=0
+
+check() {
+  local bin="$1" s="$2" pos="$3" d="$4" t="$5" ref="$6"
+  local vals n
+  vals=$(OMP_NUM_THREADS=$t $RUNNER "$bin" "$s" "$pos" "$d" 3 \
+           | grep -vE 'AFFINITY|^ROOTNODES|^CUTOFFAT|^TTSTATS|^ASPSTATS' | cut -d, -f6 | sort -u)
+  n=$(echo "$vals" | wc -l | tr -d ' ')
+  if [ "$n" != "1" ] || [ "$vals" != "$ref" ]; then
+    echo "FAIL $s $pos d$d t$t -> $(echo $vals | tr '\n' ' ') oracle $ref"
+    lfail=$((lfail+1))
+  else
+    echo "PASS $s $pos d$d t$t value $ref (3 repeats)"
+  fi
+}
+
+for pos in $POSITIONS; do
+  for d in $LADDER_DEPTHS; do
+    ref=$(OMP_NUM_THREADS=1 $RUNNER "$BIN/abtest" "AB Seq Oracle" "$pos" "$d" 1 \
+            | grep -vE 'AFFINITY|^ROOTNODES|^CUTOFFAT' | cut -d, -f6)
+    IFS='|' read -ra EX <<< "$EXACT"
+    for s in "${EX[@]}"; do
+      for t in $LADDER_THREADS; do
+        budget_left "A4 $s $pos d$d t$t" || break 4
+        check "$BIN/abtest" "$s" "$pos" "$d" "$t" "$ref"
+      done
+    done
+    IFS='|' read -ra TW <<< "$TWINS"
+    for s in "${TW[@]}"; do
+      for t in $LADDER_THREADS; do
+        budget_left "A4 $s $pos d$d t$t" || break 4
+        check "$EQ_BIN" "$s" "$pos" "$d" "$t" "$ref"
+      done
+    done
+  done
+done
+echo "A4 failures: $lfail"
+fail=$((fail + lfail))
+fi
+
+echo
+echo "=== session A done, failures: $fail"
+[ "$fail" = "0" ] || exit 1

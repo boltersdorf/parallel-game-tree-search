@@ -1,0 +1,142 @@
+#!/bin/bash
+# session D: likwid hardware counters, what the machine does while the search runs
+# interactive:  ./studies/session_d_counters.scp
+# batch:        sbatch studies/session_d_counters.scp
+# !!! the controlled comparison is AB Parallel against AB Par TT, same depth and
+# same thread count, differing only in the table, so every counter difference
+# between them is the probe and nothing else
+#SBATCH -J abD
+#SBATCH -o studies/results/slurm_%x_%j.out
+#SBATCH -e studies/results/slurm_%x_%j.out
+#SBATCH --account=<project>
+#SBATCH --partition=micro
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=48
+#SBATCH --hint=nomultithread
+#SBATCH --exclusive
+#SBATCH --time=00:30:00
+#SBATCH --ear=off
+
+set -uo pipefail
+SESSION=D_counters
+. "$(dirname "$0")/common.sh"
+
+module load likwid/5.3.0-gcc14-perf 2>/dev/null
+command -v likwid-perfctr >/dev/null || {
+  echo "ERROR: no likwid-perfctr, run: module load likwid/5.3.0-gcc14-perf"
+  exit 1; }
+
+# !!! likwid pins with -C, two pinning mechanisms at once give a placement
+# neither of them states
+unset OMP_PLACES OMP_PROC_BIND
+
+DEPTH="${DEPTH:-5}"
+POS="${POS:-position-midgame1}"
+
+# MEM is per socket and is the only way to see the numa placement of the table,
+# L3 tests whether the probe misses by design, BRANCH describes the move loops
+# !!! GROUPS is a bash builtin, this array must not be called that
+GROUP_LIST="${GROUP_LIST:-MEM L3 BRANCH}"
+
+# no table, then the table alone, the same search otherwise
+# !!! underscores, not spaces, likwid re-quotes an argument with a space and
+# abtest then never matches the name, every run of the first attempt failed
+STRATS="AB_Parallel|AB_Par_TT"
+
+# 48 threads over both sockets is the working point, 24 fills one socket only
+# and is the numa contrast, 1 thread is the per node reference
+# 48 over both sockets against 24 on one socket is the numa contrast, the
+# table is first touched by the master thread and should sit on socket 0
+CFG="48:S0:0-23@S1:0-23|24:S0:0-23"
+
+BUDGET="${BUDGET:-1500}"
+T0=$SECONDS
+budget_left() {
+    if [ $((SECONDS - T0)) -ge "$BUDGET" ]; then
+        echo "BUDGET REACHED after $((SECONDS - T0))s, did not start: $*"
+        return 1
+    fi
+    return 0
+}
+
+echo "position=$POS depth=$DEPTH groups=$GROUP_LIST"
+echo
+
+IFS='|' read -ra SS <<< "$STRATS"
+IFS='|' read -ra CC <<< "$CFG"
+
+for g in $GROUP_LIST; do
+  for cfg in "${CC[@]}"; do
+    t="${cfg%%:*}"
+    mask="${cfg#*:}"
+    for s in "${SS[@]}"; do
+      budget_left "D $g t$t $s" || break 3
+      echo "===== group=$g threads=$t mask=$mask strategy=$s"
+      out=$(OMP_NUM_THREADS=$t likwid-perfctr -C "$mask" -g "$g" \
+              "$BIN/abtest" "$s" "$POS" "$DEPTH" 1 2>&1)
+      echo "$out" | grep -vE '^ROOTNODES|^CUTOFFAT'
+      # !!! likwid returns 0 even when the wrapped binary failed, so the search
+      # having produced its csv line is the only proof the counters mean anything
+      if ! echo "$out" | grep -q "^${s//_/ },"; then
+        echo "ERROR: no search output for $s, counters above are meaningless"
+        exit 1
+      fi
+      echo
+    done
+  done
+done
+
+# !!! the control, depth 1 does almost no search, so whatever the counters still
+# report there is setup and not the search, including the table allocation
+echo "===== control, depth 1, this is setup and table clear only"
+for g in $GROUP_LIST; do
+  for s in AB_Parallel AB_Par_TT; do
+    budget_left "D control $g $s" || break 2
+    echo "----- group=$g strategy=$s"
+    OMP_NUM_THREADS=48 likwid-perfctr -C "S0:0-23@S1:0-23" -g "$g" \
+        "$BIN/abtest" "$s" "$POS" 1 1 2>&1 | grep -vE '^ROOTNODES|^CUTOFFAT'
+    echo
+  done
+done
+
+echo
+# !!! the per socket traffic of the plain run cannot be read on its own: a table
+# genuinely pinned to socket 0 by first touch, and an uncore counter which was
+# never programmed for socket 1, print the same thing. interleaving the pages is
+# the control which separates them, and it is at the same time the NUMA fix
+# itself, so the same two runs say whether the counter works and whether the fix
+# would buy anything
+echo "===== NUMA control, same run under three memory policies"
+# !!! numactl is not in the compute node PATH, only the login node has it,
+# and neither module version is the default so the version is named here
+module load numactl/2.0.18-intel25 2>/dev/null || \
+  module load numactl/2.0.18-gcc14 2>/dev/null || \
+  module load numactl 2>/dev/null
+# !!! without numactl the control cannot run, but the twelve counter runs above
+# are already written and valid, so skip it rather than failing the session
+if ! command -v numactl >/dev/null; then
+  echo "SKIPPED: no numactl on this node, the per socket traffic above stays"
+  echo "         uncontrolled and must not be reported"
+else
+numactl --hardware | head -3
+for pol in "default" "--interleave=all" "--membind=1"; do
+  budget_left "NUMA $pol" || break
+  echo "----- memory policy: $pol"
+  if [ "$pol" = "default" ]; then NC=""; else NC="numactl $pol"; fi
+  # !!! OMP_NUM_THREADS has to be set here too, the site default is 1 and the
+  # first version of this block inherited it, so the control silently ran on one
+  # thread while the runs it was meant to control ran on 48
+  out=$(OMP_NUM_THREADS=48 $NC likwid-perfctr -C "S0:0-23@S1:0-23" -g MEM \
+          "$BIN/abtest" AB_Par_TT "$POS" "$DEPTH" 1 2>&1)
+  echo "$out" | grep -vE '^ROOTNODES|^CUTOFFAT'
+  if ! echo "$out" | grep -q "^AB Par TT,"; then
+    echo "ERROR: no search output under policy $pol"
+    exit 1
+  fi
+  echo
+done
+fi
+
+echo
+echo "=== session D done after $((SECONDS - T0))s"

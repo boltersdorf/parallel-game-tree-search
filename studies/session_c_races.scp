@@ -1,0 +1,75 @@
+#!/bin/bash
+# session C: race detection with ThreadSanitizer, small depths because it is slow
+# !!! the sanitizer crashes before main on the mac, so this check exists only
+# here, a report naming our own files is blocking, reports naming the openmp
+# runtime are expected when the runtime has no sanitizer support
+#SBATCH -J ab_sC
+#SBATCH -o studies/results/slurm_%x_%j.out
+#SBATCH -e studies/results/slurm_%x_%j.out
+#SBATCH --account=<project>
+#SBATCH --partition=micro
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=48
+#SBATCH --hint=nomultithread
+#SBATCH --exclusive
+#SBATCH --time=00:30:00
+#SBATCH --ear=off
+
+set -uo pipefail
+SESSION=C_races
+. "$(dirname "$0")/common.sh"
+
+module load intel 2>/dev/null
+
+# separate build, sanitizer only, never used for a timing
+# !!! do not swallow the build output, a failure here has to be readable
+if ! "$AN/build.sh" -tsan "-fsanitize=thread -g"; then
+  echo "ERROR: sanitizer build failed, see the compiler output above"
+  exit 1
+fi
+TB_BIN="$BIN/abtest-tsan"
+
+export TSAN_OPTIONS="halt_on_error=0 history_size=7 second_deadlock_stack=1"
+export OMP_PLACES=cores
+export OMP_PROC_BIND=close
+
+RAW="$OUT/${RUNID}_tsan_raw.log"
+: > "$RAW"
+
+# root window, then the lockless slots, then nested tasks and shared history
+TSAN_STRATS="AB Parallel|AB Par TT|AB Par TT ID Asp Ord YBW"
+IFS='|' read -ra TS <<< "$TSAN_STRATS"
+
+for s in "${TS[@]}"; do
+  for pos in start position-midgame1 position-endgame; do
+    for t in 4 16 48; do
+      echo "--- strategy=$s pos=$pos threads=$t" >> "$RAW"
+      OMP_NUM_THREADS=$t $RUNNER "$TB_BIN" "$s" "$pos" 3 2 >> "$RAW" 2>&1
+    done
+  done
+done
+
+total=$(grep -c "WARNING: ThreadSanitizer" "$RAW")
+echo "sanitizer warnings in total: $total"
+echo
+
+# !!! judge by the SUMMARY line, it names where the racing access is, our files
+# also turn up as plain stack frames, because every worker's stack runs through
+# the omp parallel line, and those frames say nothing about who raced
+OURS='(^|[ /])src/(framework|search|sequential|parallel|driver)/'
+
+echo "=== every SUMMARY, this is where each race actually sits"
+grep "^SUMMARY" "$RAW" | sort | uniq -c
+echo
+blocking=$(grep "^SUMMARY" "$RAW" | grep -cE "$OURS")
+echo "SUMMARY lines naming our own code: $blocking"
+if [ "$blocking" -gt 0 ]; then
+  echo "BLOCKING, these are real:"
+  grep "^SUMMARY" "$RAW" | grep -E "$OURS" | sort -u
+else
+  echo "none, every race sits in the openmp runtime, which is not instrumented"
+fi
+echo
+echo "full log: $RAW"
+echo "=== session C done"

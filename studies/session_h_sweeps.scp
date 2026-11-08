@@ -1,0 +1,131 @@
+#!/bin/bash
+# session H: the three parameter sweeps, wait threshold, table size, window delta
+# interactive:  ./studies/session_h_sweeps.scp
+# batch:        sbatch studies/session_h_sweeps.scp
+# !!! every variant is its own binary and differs in exactly one define, the
+# default of each sweep runs from bin/abtest, the binary the ladder used
+#SBATCH -J abH
+#SBATCH -o studies/results/slurm_%x_%j.out
+#SBATCH -e studies/results/slurm_%x_%j.out
+#SBATCH --account=<project>
+#SBATCH --partition=micro
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=48
+#SBATCH --hint=nomultithread
+#SBATCH --exclusive
+#SBATCH --time=00:30:00
+#SBATCH --ear=off
+
+set -uo pipefail
+SESSION=H_sweeps
+. "$(dirname "$0")/common.sh"
+
+DEPTH="${DEPTH:-5}"
+REPS="${REPS:-3}"
+THREADS="${THREADS:-48}"
+POSITIONS="${POSITIONS:-position-midgame1 position-endgame}"
+
+# !!! the builds are what cost the time here, about two minutes each, so the
+# guard runs before every build and the default of each sweep comes first
+BUDGET="${BUDGET:-1500}"
+T0=$SECONDS
+budget_left() {
+    if [ $((SECONDS - T0)) -ge "$BUDGET" ]; then
+        echo "BUDGET REACHED after $((SECONDS - T0))s, did not start: $*"
+        return 1
+    fi
+    return 0
+}
+
+# !!! remove the old binary first, a failed compile must not leave a stale one
+# that then runs as if it were the new variant
+variant() {
+    local suf="$1" def="$2"
+    rm -f "$BIN/abtest$suf"
+    "$AN/build.sh" "$suf" "$def" || return 1
+    [ -x "$BIN/abtest$suf" ] || return 1
+}
+
+run() {
+    OMP_NUM_THREADS=$THREADS "$1" "$3" "$4" "$DEPTH" "$REPS" \
+      | grep -v AFFINITY | sed "s/^/$2,/"
+}
+
+echo "depth=$DEPTH threads=$THREADS reps=$REPS budget=${BUDGET}s"
+echo "csv: tag,strategy,position,depth,threads,repeat,value,move,secs,interior,leaf,ttcut,ceiling,cutoffs,searched"
+echo
+
+echo "=== H1 wait threshold, YBW_MIN_DEPTH, default 2"
+for m in 2 3 4; do
+  if [ "$m" = 2 ]; then
+    B="$BIN/abtest"
+  else
+    budget_left "H1 build m$m" || break
+    if ! variant "-ybw$m" "-DYBW_MIN_DEPTH=$m"; then
+      echo "ERROR: build for threshold $m failed, its runs are skipped"
+      continue
+    fi
+    B="$BIN/abtest-ybw$m"
+  fi
+  for pos in $POSITIONS; do
+    for s in "AB Par TT ID Asp Ord YBW" "AB Par YBW"; do
+      budget_left "H1 m$m $s $pos" || break 3
+      run "$B" "YBWMIN_$m" "$s" "$pos"
+    done
+  done
+done
+echo
+
+echo "=== H2 table size, TT_BITS, default 23, entries are 16 B each"
+for b in 23 17 20 26 14; do
+  if [ "$b" = 23 ]; then
+    B="$BIN/abtest"
+  else
+    budget_left "H2 build bits$b" || break
+    if ! variant "-tt$b" "-DTT_BITS=$b"; then
+      echo "ERROR: build for TT_BITS=$b failed, its runs are skipped"
+      continue
+    fi
+    B="$BIN/abtest-tt$b"
+  fi
+  for pos in $POSITIONS; do
+    for s in "AB Par TT" "AB Par TT ID Asp Ord"; do
+      budget_left "H2 bits$b $s $pos" || break 3
+      run "$B" "TTBITS_$b" "$s" "$pos"
+    done
+  done
+done
+echo
+
+echo "=== H3 window delta, ASP_DELTA, default 200"
+for dl in 200 50 800; do
+  if [ "$dl" = 200 ]; then
+    B="$BIN/abtest"
+  else
+    budget_left "H3 build delta$dl" || break
+    if ! variant "-asp$dl" "-DASP_DELTA=$dl"; then
+      echo "ERROR: build for delta $dl failed, its runs are skipped"
+      continue
+    fi
+    B="$BIN/abtest-asp$dl"
+  fi
+  for pos in $POSITIONS; do
+    budget_left "H3 delta$dl $pos" || break 2
+    run "$B" "DELTA_$dl" "AB Par TT ID Asp" "$pos"
+  done
+done
+echo
+
+# one value per sweep and position is the expected reading, the table sweep may
+# spread through the depth >= rule and that is a finding, not a failure
+echo "=== value spread per sweep and position"
+grep -E '^(YBWMIN|TTBITS|DELTA)_' "$RESULT" \
+  | grep -vE ',(ROOTNODES|CUTOFFAT|TTSTATS|ASPSTATS),' \
+  | awk -F, '{ sub(/_[0-9]+$/,"",$1); k=$1" "$3
+               if (!((k SUBSEP $7) in seen)) { seen[k,$7]=1; cnt[k]++; vals[k]=vals[k]" "$7 } }
+             END { for (k in cnt) printf "%s: %d distinct%s\n", k, cnt[k], vals[k] }' \
+  | sort
+
+echo
+echo "=== session H done after $((SECONDS - T0))s"

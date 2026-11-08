@@ -1,0 +1,118 @@
+=== Sun Aug 30 06:38:28 PM CEST 2026 on i01r01c02s06, job 5819053, 96 cpus in the cpuset
+cpu: Intel(R) Xeon(R) Platinum 8174 CPU @ 3.10GHz
+mask: 0-95, OMP_NUM_THREADS=1
+CPU(s):                                  96
+Thread(s) per core:                      2
+Core(s) per socket:                      24
+Socket(s):                               2
+CPU(s) scaling MHz:                      70%
+
+=== A1 parallel value against the sequential oracle
+PASS start d3 t1 value 66 (5 repeats)
+PASS start d3 t2 value 66 (5 repeats)
+PASS start d3 t4 value 66 (5 repeats)
+PASS start d3 t8 value 66 (5 repeats)
+PASS start d3 t16 value 66 (5 repeats)
+PASS start d3 t24 value 66 (5 repeats)
+PASS start d3 t32 value 66 (5 repeats)
+PASS start d3 t48 value 66 (5 repeats)
+PASS start d4 t1 value 0 (5 repeats)
+PASS start d4 t2 value 0 (5 repeats)
+PASS start d4 t4 value 0 (5 repeats)
+PASS start d4 t8 value 0 (5 repeats)
+PASS start d4 t16 value 0 (5 repeats)
+PASS start d4 t24 value 0 (5 repeats)
+PASS start d4 t32 value 0 (5 repeats)
+PASS start d4 t48 value 0 (5 repeats)
+PASS start d5 t1 value 47 (5 repeats)
+PASS start d5 t2 value 47 (5 repeats)
+PASS start d5 t4 value 47 (5 repeats)
+PASS start d5 t8 value 47 (5 repeats)
+PASS start d5 t16 value 47 (5 repeats)
+PASS start d5 t24 value 47 (5 repeats)
+PASS start d5 t32 value 47 (5 repeats)
+PASS start d5 t48 value 47 (5 repeats)
+PASS position-midgame1 d3 t1 value -163 (5 repeats)
+PASS position-midgame1 d3 t2 value -163 (5 repeats)
+PASS position-midgame1 d3 t4 value -163 (5 repeats)
+PASS position-midgame1 d3 t8 value -163 (5 repeats)
+PASS position-midgame1 d3 t16 value -163 (5 repeats)
+PASS position-midgame1 d3 t24 value -163 (5 repeats)
+PASS position-midgame1 d3 t32 value -163 (5 repeats)
+PASS position-midgame1 d3 t48 value -163 (5 repeats)
+PASS position-midgame1 d4 t1 value -230 (5 repeats)
+PASS position-midgame1 d4 t2 value -230 (5 repeats)
+PASS position-midgame1 d4 t4 value -230 (5 repeats)
+PASS position-midgame1 d4 t8 value -230 (5 repeats)
+PASS position-midgame1 d4 t16 value -230 (5 repeats)
+PASS position-midgame1 d4 t24 value -230 (5 repeats)
+PASS position-midgame1 d4 t32 value -230 (5 repeats)
+PASS position-midgame1 d4 t48 value -230 (5 repeats)
+PASS position-midgame1 d5 t1 value -158 (5 repeats)
+PASS position-midgame1 d5 t2 value -158 (5 repeats)
+PASS position-midgame1 d5 t4 value -158 (5 repeats)
+PASS position-midgame1 d5 t8 value -158 (5 repeats)
+PASS position-midgame1 d5 t16 value -158 (5 repeats)
+PASS position-midgame1 d5 t24 value -158 (5 repeats)
+PASS position-midgame1 d5 t32 value -158 (5 repeats)
+PASS position-midgame1 d5 t48 value -158 (5 repeats)
+PASS position-midgame2 d3 t1 value 1701 (5 repeats)
+PASS position-midgame2 d3 t2 value 1701 (5 repeats)
+PASS position-midgame2 d3 t4 value 1701 (5 repeats)
+PASS position-midgame2 d3 t8 value 1701 (5 repeats)
+PASS position-midgame2 d3 t16 value 1701 (5 repeats)
+PASS position-midgame2 d3 t24 value 1701 (5 repeats)
+PASS position-midgame2 d3 t32 value 1701 (5 repeats)
+PASS position-midgame2 d3 t48 value 1701 (5 repeats)
+PASS position-midgame2 d4 t1 value 1655 (5 repeats)
+PASS position-midgame2 d4 t2 value 1655 (5 repeats)
+PASS position-midgame2 d4 t4 value 1655 (5 repeats)
+PASS position-midgame2 d4 t8 value 1655 (5 repeats)
+PASS position-midgame2 d4 t16 value 1655 (5 repeats)
+PASS position-midgame2 d4 t24 value 1655 (5 repeats)
+PASS position-midgame2 d4 t32 value 1655 (5 repeats)
+PASS position-midgame2 d4 t48 value 1655 (5 repeats)
+PASS position-midgame2 d5 t1 value 1682 (5 repeats)
+PASS position-midgame2 d5 t2 value 1682 (5 repeats)
+PASS position-midgame2 d5 t4 value 1682 (5 repeats)
+PASS position-midgame2 d5 t8 value 1682 (5 repeats)
+PASS position-midgame2 d5 t16 value 1682 (5 repeats)
+PASS position-midgame2 d5 t24 value 1682 (5 repeats)
+PASS position-midgame2 d5 t32 value 1682 (5 repeats)
+PASS position-midgame2 d5 t48 value 1682 (5 repeats)
+PASS position-endgame d3 t1 value -6420 (5 repeats)
+PASS position-endgame d3 t2 value -6420 (5 repeats)
+PASS position-endgame d3 t4 value -6420 (5 repeats)
+PASS position-endgame d3 t8 value -6420 (5 repeats)
+PASS position-endgame d3 t16 value -6420 (5 repeats)
+PASS position-endgame d3 t24 value -6420 (5 repeats)
+PASS position-endgame d3 t32 value -6420 (5 repeats)
+PASS position-endgame d3 t48 value -6420 (5 repeats)
+PASS position-endgame d4 t1 value -6599 (5 repeats)
+PASS position-endgame d4 t2 value -6599 (5 repeats)
+PASS position-endgame d4 t4 value -6599 (5 repeats)
+PASS position-endgame d4 t8 value -6599 (5 repeats)
+PASS position-endgame d4 t16 value -6599 (5 repeats)
+PASS position-endgame d4 t24 value -6599 (5 repeats)
+PASS position-endgame d4 t32 value -6599 (5 repeats)
+PASS position-endgame d4 t48 value -6599 (5 repeats)
+PASS position-endgame d5 t1 value -6495 (5 repeats)
+PASS position-endgame d5 t2 value -6495 (5 repeats)
+PASS position-endgame d5 t4 value -6495 (5 repeats)
+PASS position-endgame d5 t8 value -6495 (5 repeats)
+PASS position-endgame d5 t16 value -6495 (5 repeats)
+PASS position-endgame d5 t24 value -6495 (5 repeats)
+PASS position-endgame d5 t32 value -6495 (5 repeats)
+PASS position-endgame d5 t48 value -6495 (5 repeats)
+A1 failures: 0
+
+=== A2 minmax and alpha/beta on the same position, same value expected
+strategy,position,depth,threads,repeat,value,move,secs,interior,leaf
+Minmax Seq Oracle,start,3,1,0,66,A1/RightDown,0.191066,1980,98912,0.000,T0=1980:98912:0.000000
+ROOTNODES,Minmax Seq Oracle,start,3,1,0
+AB Seq Oracle,start,3,1,0,66,A1/RightDown,0.063385,1270,32052,21.470,T0=1270:32052:0.000000
+ROOTNODES,AB Seq Oracle,start,3,1,0,737,584,866,731,393,649,552,538,407,392,535,483,694,308,581,479,732,710,1545,1452,1100,1243,1017,717,166,1021,1061,1213,1528,1220,1552,955,1480,160,1278,113,113,113,113,1347,160,1127,105,1052
+Minmax Seq Oracle,start,4,1,0,0,A1/RightDown,9.666713,100892,5045110,0.000,T0=100892:5045110:0.000000
+ROOTNODES,Minmax Seq Oracle,start,4,1,0
+AB Seq Oracle,start,4,1,0,0,A1/RightDown,1.390620,46186,686786,17.072,T0=46186:686786:0.000000
+ROOTNODES,AB Seq Oracle,start,4,1,0,23607,28681,27698,22878,8889,14493,11028,7855,15241,14591,10830,7408,18286,7543,21114,14314,33487,24761,19456,27132,8727,23091,19772,8112,6786,18184,11628,12012,16851,24341,42933,8787,40577,6437,22994,8464,924,2000,5364,26454,8137,27807,5822,17476

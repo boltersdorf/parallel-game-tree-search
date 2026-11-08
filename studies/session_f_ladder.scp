@@ -1,0 +1,85 @@
+#!/bin/bash
+# session F: the optimization ladder, one protocol for every version
+# interactive:  DEPTH=5 ./studies/session_f_ladder.scp
+# batch:        sbatch --export=ALL,DEPTH=5 studies/session_f_ladder.scp
+# !!! never change this file to suit one version, add the version to LADDER
+#SBATCH -J abF
+#SBATCH -o studies/results/slurm_%x_%j.out
+#SBATCH -e studies/results/slurm_%x_%j.out
+#SBATCH --account=<project>
+#SBATCH --partition=micro
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=48
+#SBATCH --hint=nomultithread
+#SBATCH --exclusive
+#SBATCH --time=00:30:00
+#SBATCH --ear=off
+
+set -uo pipefail
+SESSION=F_ladder
+. "$(dirname "$0")/common.sh"
+
+DEPTH="${DEPTH:-5}"
+THREADS="${THREADS:-48}"
+REPS="${REPS:-5}"
+POSITIONS="start position-midgame1 position-midgame2 position-endgame"
+
+LADDER="AB Parallel|AB Par TT|AB Par TT ID|AB Par TT ID Asp|AB Par TT ID Asp Ord|AB Par TT ID Asp Ord YBW|AB Par Ord|AB Par YBW"
+
+# !!! the session has to end on its own, a job killed at the wall clock loses
+# the tail of what it was writing and a short result then looks complete, so
+# stop starting new work past the budget and say so in the log
+BUDGET="${BUDGET:-1500}"
+T0=$SECONDS
+budget_left() {
+    if [ $((SECONDS - T0)) -ge "$BUDGET" ]; then
+        echo "BUDGET REACHED after $((SECONDS - T0))s, did not start: $*"
+        return 1
+    fi
+    return 0
+}
+
+run() { OMP_NUM_THREADS=$1 $RUNNER "$BIN/abtest" "$2" "$3" "$4" "$5" | grep -v AFFINITY; }
+
+IFS='|' read -ra ALL <<< "$LADDER"
+
+echo "depth=$DEPTH threads=$THREADS reps=$REPS budget=${BUDGET}s"
+echo "versions: ${#ALL[@]}"
+echo "csv: strategy,position,depth,threads,repeat,value,move,secs,interior,leaf,ttcut,ceiling,cutoffs,searched"
+echo
+
+# one thread is the denominator of every search overhead, and at one thread the
+# search is deterministic, so one repeat is enough and the slow ones stay cheap
+echo "=== F1 one thread reference, depth $DEPTH"
+for pos in $POSITIONS; do
+  budget_left "F1 $pos" || break
+  run 1 "AB Seq Oracle" "$pos" "$DEPTH" 1
+  for s in "${ALL[@]}"; do
+    budget_left "F1 $s $pos" || break 2
+    run 1 "$s" "$pos" "$DEPTH" 1
+  done
+done
+echo
+
+echo "=== F2 all versions at $THREADS threads, depth $DEPTH"
+for s in "${ALL[@]}"; do
+  for pos in $POSITIONS; do
+    budget_left "F2 $s $pos" || break 2
+    run "$THREADS" "$s" "$pos" "$DEPTH" "$REPS"
+  done
+done
+echo
+
+echo "=== F3 depth sweep at $THREADS threads"
+for d in 3 4; do
+  for s in "${ALL[@]}"; do
+    for pos in $POSITIONS; do
+      budget_left "F3 d$d $s $pos" || break 3
+      run "$THREADS" "$s" "$pos" "$d" 3
+    done
+  done
+done
+
+echo
+echo "=== session F done after $((SECONDS - T0))s"

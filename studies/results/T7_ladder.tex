@@ -1,0 +1,27 @@
+\begin{table}[htbp]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\caption{Node visits and wall time of every version on the four given positions, fixed depth 5, medians of five repetitions. A node visit is any node the search entered, added over three kinds: interior nodes whose moves were generated, leaf nodes handed to the evaluation function, and nodes the transposition table answered without searching them. The first row is the sequential $\alpha\beta$ on one physical core, given for scale; every other row runs 48 threads, one per physical core. The middle block is cumulative, each row adding one optimization to the row above. The last block carries one optimization alone on the plain parallel search, separating what it does by itself from what it does once the others are present.}
+\label{tab:abladder}
+\begin{tabular}{@{}lrrrrrrrr@{}}
+\toprule
+ & \multicolumn{2}{c}{start} & \multicolumn{2}{c}{midgame 1} & \multicolumn{2}{c}{midgame 2} & \multicolumn{2}{c}{endgame} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9}
+Version & Node visits & Time & Node visits & Time & Node visits & Time & Node visits & Time \\
+ & [$10^6$] & [sec] & [$10^6$] & [sec] & [$10^6$] & [sec] & [$10^6$] & [sec] \\
+\midrule
+$\alpha\beta$ sequential, 1 core & 17.2 & 33.1 & 14.7 & 34.6 & 8.49 & 17.0 & 1.73 & 2.92 \\
+\midrule
+$\alpha\beta$ parallel, 48 threads & 37.5 & 2.98 & 19.4 & 4.13 & 10.8 & 1.01 & 1.86 & 0.258 \\
++ transposition table & 15.9 & 1.70 & 12.6 & 2.55 & 7.46 & 0.625 & 1.21 & 0.168 \\
++ iterative deepening & 4.30 & 0.878 & 3.92 & 1.65 & 1.88 & 0.233 & 0.218 & 0.054 \\
++ aspiration window & 4.04 & 0.771 & 1.54 & 1.54 & 0.479 & 0.126 & 0.306 & 0.064 \\
++ move ordering & 0.370 & 0.034 & 0.401 & 0.148 & 0.274 & 0.046 & 0.125 & 0.038 \\
++ YBWC & 0.144 & 0.013 & 0.680 & 0.050 & 0.278 & 0.022 & 0.069 & 0.007 \\
+\midrule
+move ordering alone & 0.519 & 0.049 & 1.32 & 0.240 & 0.751 & 0.062 & 0.145 & 0.028 \\
+YBWC alone & 6.82 & 0.284 & 17.0 & 0.853 & 12.0 & 0.512 & 2.54 & 0.094 \\
+\bottomrule
+\end{tabular}
+\end{table}
