@@ -1,5 +1,5 @@
 #!/bin/bash
-# session H: the three parameter sweeps, wait threshold, table size, window delta
+# session H: the three parameter sweeps, split depth, table size, window delta
 # interactive:  ./studies/session_h_sweeps.scp
 # batch:        sbatch studies/session_h_sweeps.scp
 # !!! every variant is its own binary and differs in exactly one define, the
@@ -56,14 +56,14 @@ echo "depth=$DEPTH threads=$THREADS reps=$REPS budget=${BUDGET}s"
 echo "csv: tag,strategy,position,depth,threads,repeat,value,move,secs,interior,leaf,ttcut,ceiling,cutoffs,searched"
 echo
 
-echo "=== H1 wait threshold, YBW_MIN_DEPTH, default 2"
+echo "=== H1 split depth, YBW_MIN_DEPTH, default 2"
 for m in 2 3 4; do
   if [ "$m" = 2 ]; then
     B="$BIN/abtest"
   else
     budget_left "H1 build m$m" || break
     if ! variant "-ybw$m" "-DYBW_MIN_DEPTH=$m"; then
-      echo "ERROR: build for threshold $m failed, its runs are skipped"
+      echo "ERROR: build for split depth $m failed, its runs are skipped"
       continue
     fi
     B="$BIN/abtest-ybw$m"

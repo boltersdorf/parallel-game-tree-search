@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-F10: what is left of the unoptimized search after each optimization is added,
+what is left of root splitting after each optimization is added,
 node visits on the left and wall time on the right, both as a fraction of AB
 Parallel so a falling curve means an improvement.
 
@@ -24,7 +24,7 @@ FIG = AN / "figures"
 CM = 1 / 2.54
 
 # the ticks are cumulative, each one adds its optimization to the one left of it
-LADDER = [("AB Parallel", "parallel " + r"$\alpha\beta$"),
+LADDER = [("AB Parallel", "root splitting"),
           ("AB Par TT", "+ transposition table"),
           ("AB Par TT ID", "+ iterative deepening"),
           ("AB Par TT ID Asp", "+ aspiration window"),
@@ -49,8 +49,8 @@ def main():
                              sharey=True)
     xs = range(len(LADDER))
     for ax, field, ylab in (
-            (axes[0], "nodes", r"node visits, relative to parallel $\alpha\beta$"),
-            (axes[1], "secs", r"wall time, relative to parallel $\alpha\beta$")):
+            (axes[0], "nodes", "node visits, relative to root splitting"),
+            (axes[1], "secs", "wall time, relative to root splitting")):
         ax.axhline(1, color="0.75", lw=0.8)
         for pos, plab, c, mk, ls in POS:
             base = med(LADDER[0][0], pos, field)
@@ -74,9 +74,9 @@ def main():
     handles, labels = axes[0].get_legend_handles_labels()
     fig.legend(handles, labels, loc="lower center", ncol=4, frameon=False,
                handlelength=2.2, columnspacing=1.6, bbox_to_anchor=(0.5, 0.0))
-    fig.savefig(FIG / "F10.png", bbox_inches="tight")
+    fig.savefig(FIG / "ablation_visits_time.png", bbox_inches="tight")
     plt.close(fig)
-    print("written: figures/F10.png")
+    print("written: figures/ablation_visits_time.png")
 
     print(f"\n{'optimization':16s}" + "".join(f"{p[1]:>26s}" for p in POS))
     for s, lab in LADDER:
@@ -87,23 +87,6 @@ def main():
             line += f"   {n:10.4f} n {t:8.4f} t"
         print(line)
 
-    print(
-        "\nFig. 10. Node visits and wall time after each optimization is "
-        "added, both divided by the value the parallel alpha-beta without any "
-        "of them needs on the same position, depth 5, 48 threads, medians of "
-        "five repetitions, logarithmic axis. A value of 1/100 therefore means "
-        "the version needs one hundredth of what the parallel alpha-beta "
-        "needs, so the line at one is that reference and a falling curve is "
-        "an improvement in both panels. The horizontal axis is cumulative, "
-        "each tick adding its optimization to the one on its left, and YBWC "
-        "is the Young Brothers Wait Concept. The two panels are the two factors of the identity time = "
-        "node visits x time per node and they do not move together: young "
-        "brothers wait leaves the node count almost unchanged on the midgame "
-        "positions and still removes most of the remaining wall time, because "
-        "it keeps threads busy which root splitting leaves idle. Xeon "
-        "Platinum 8174, 48 physical cores, one thread per core, "
-        "OMP_PLACES=cores, OMP_PROC_BIND=close."
-    )
 
 
 if __name__ == "__main__":

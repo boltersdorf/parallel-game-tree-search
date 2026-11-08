@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-T7: the optimization ladder at the working point, nodes and wall time for every
-version on the four given positions.
+every version at the working point, nodes and wall time on the four test
+positions.
 
 !!! nodes and time never move by the same ratio, the node rate falls as rungs
 add work per node, which is why both columns exist and neither is redundant
@@ -13,7 +13,7 @@ from parse_results import rows, newest, AN
 
 VERSIONS = [
     ("AB Seq Oracle", r"$\alpha\beta$ sequential, 1 core", 1),
-    ("AB Parallel", r"$\alpha\beta$ parallel, 48 threads", 48),
+    ("AB Parallel", "root splitting, 48 threads", 48),
     ("AB Par TT", r"+ transposition table", 48),
     ("AB Par TT ID", r"+ iterative deepening", 48),
     ("AB Par TT ID Asp", r"+ aspiration window", 48),
@@ -63,19 +63,6 @@ def main():
         r"\cmidrule(lr){" + f"{2+2*k}-{3+2*k}" + "}" for k in range(ncol))
     tex = [r"\begin{table}[htbp]", r"\centering", r"\scriptsize",
            r"\setlength{\tabcolsep}{3pt}",
-           r"\caption{Node visits and wall time of every version on the four "
-           r"given positions, fixed depth 5, medians of five repetitions. A "
-           r"node visit is any node the search entered, added over three "
-           r"kinds: interior nodes whose moves were generated, leaf nodes "
-           r"handed to the evaluation function, and nodes the transposition "
-           r"table answered without searching them. The first row is the "
-           r"sequential $\alpha\beta$ on one physical core, given for scale; "
-           r"every other row runs 48 threads, one per physical core. The "
-           r"middle block is cumulative, each row adding one optimization to "
-           r"the row above. The last block carries one optimization alone on "
-           r"the plain parallel search, separating what it does by itself "
-           r"from what it does once the others are present.}",
-           r"\label{tab:abladder}",
            r"\begin{tabular}{@{}l" + "rr" * ncol + r"@{}}", r"\toprule",
            " & " + heads + r" \\",
            cmid,
@@ -89,7 +76,7 @@ def main():
             tex.append(r"\midrule")
     tex += [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
 
-    out = AN / "results/T7_ladder.tex"
+    out = AN / "results/ladder.tex"
     out.write_text("\n".join(tex) + "\n")
     print(f"\nLaTeX: {out.relative_to(AN)}")
 

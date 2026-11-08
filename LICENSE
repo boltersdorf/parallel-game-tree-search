@@ -27,12 +27,13 @@ Abalone framework
 The engine is built on the Abalone framework by Josef Weidendorfer: the board,
 move generation, evaluation, search interface, network bus and the player,
 referee and start programs in src/framework/. The search strategies, the
-transposition table, the measurement driver and the timed engine were written
-on top of it and then performance-engineered.
+transposition table, the measurement driver, the timed engine, the tests and
+the studies are covered by the MIT license above.
 
 The files in src/framework/ are Copyright (c) 1997-2015 Josef Weidendorfer and
 are not covered by the MIT license above. They keep their original notices.
 player.cpp, referee.cpp and start.cpp are licensed under the GNU General Public
-License, version 2 or later, as their headers state. The same board and move
-code is published under the GPL-2.0 as part of Qenolaba. Changes made to
-board.h, eval.h, eval.cpp and player.cpp are marked in their headers.
+License, version 2 or later, as their headers state. The framework descends
+from Kenolaba, which Weidendorfer publishes under the GPL-2.0 as Qenolaba.
+Changes made to board.h, eval.h, eval.cpp and player.cpp are marked in their
+headers.

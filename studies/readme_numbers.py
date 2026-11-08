@@ -18,6 +18,7 @@ H = R / "H_sweeps_20260831-013430_j5819681_i02r04c06s01.out"
 A2 = R / "sA2A3.out"
 D = sorted(R.glob("D_counters_*.out"))
 C = R / "C_races_20260830-233133_j5819573_i01r05c06s11.out"
+A = [R / "sA_oracle.out", R / "A_oracle_20260831-015406_j5819721_i01r03c05s08.out"]
 
 POS = ["start", "position-midgame1", "position-midgame2", "position-endgame"]
 SHORT = {"start": "start", "position-midgame1": "mid1",
@@ -54,16 +55,28 @@ def alpha_beta_vs_minimax():
             secs[f[0], f[1]] = float(f[7])
             vals[f[0], f[1]] = int(f[5])
     for p in POS:
-        print(f"  {SHORT[p]:5s} leaf reduction {leaves['Minmax Seq Oracle', p] / leaves['AB Seq Oracle', p]:5.2f}x"
-              f"  time {secs['Minmax Seq Oracle', p] / secs['AB Seq Oracle', p]:5.2f}x"
+        print(f"  {SHORT[p]:5s} leaf reduction {leaves['Minmax Seq Oracle', p] / leaves['AB Seq Oracle', p]:5.1f}x"
+              f"  time {secs['Minmax Seq Oracle', p] / secs['AB Seq Oracle', p]:5.1f}x"
               f"  same value {vals['Minmax Seq Oracle', p] == vals['AB Seq Oracle', p]}")
 
 
-def first_move_cutoffs(rs, cut):
-    section("share of cutoffs on the first move, depth 5, one thread (F)")
-    for s in ["AB Seq Oracle", "AB Par TT", "AB Par TT ID", "AB Par TT ID Asp", "AB Par TT ID Asp Ord"]:
-        v = [100 * c[0][0] / sum(c[0]) for p in POS for c in [cut[(s, p, 5, 1)]] if c]
-        print(f"  {s:26s} " + "  ".join(f"{x:5.1f}" for x in v))
+def oracle():
+    section("cluster runs against the sequential value (sA, A)")
+    for path in A:
+        lines = open(path).read().splitlines()
+        print(f"  {path.name[:9]:9s} PASS {sum(l.startswith('PASS') for l in lines)}"
+              f"  FAIL {sum(l.startswith('FAIL') for l in lines)}")
+
+
+def first_move_cutoffs(cut):
+    section("share of cutoffs on the first move, depth 5, median of repeats (F)")
+    for t in (1, 48):
+        for s in ["AB Seq Oracle", "AB Parallel", "AB Par TT", "AB Par TT ID", "AB Par TT ID Asp",
+                  "AB Par TT ID Asp Ord"]:
+            if s == "AB Seq Oracle" and t > 1:
+                continue
+            v = [st.median(100 * c[0] / sum(c) for c in cut[(s, p, 5, t)]) for p in POS]
+            print(f"  t{t:<3d}{s:26s} " + "  ".join(f"{x:5.1f}" for x in v))
 
 
 def ladder(rs):
@@ -83,6 +96,14 @@ def ladder(rs):
         t = 1 if s == "AB Seq Oracle" else 48
         v = [med(rs, "nodes", strategy=s, pos=p, depth=5, threads=t) / 1e6 for p in POS]
         print(f"  {s:26s} t{t:<3d}" + "  ".join(f"{x:7.3f}" for x in v))
+    v = [med(rs, "secs", strategy="AB Seq Oracle", pos=p, depth=5, threads=1) /
+         med(rs, "secs", strategy=TOP, pos=p, depth=5, threads=48) for p in POS]
+    print("  sequential alpha-beta at one core over the top version at 48 threads: " +
+          "  ".join(f"{x:.0f}x" for x in v))
+    o = dict(strategy="AB Par TT ID Asp Ord", pos="position-midgame1", depth=5, threads=48)
+    y = dict(o, strategy=TOP)
+    print(f"  YBWC on top of the other four, mid1: node visits {100 * (med(rs, 'nodes', **y) / med(rs, 'nodes', **o) - 1):+.0f} %,"
+          f" wall time {med(rs, 'secs', **o) / med(rs, 'secs', **y):.2f}x faster")
     s = "AB Par YBW"
     n1 = med(rs, "nodes", strategy=s, pos="start", depth=5, threads=1)
     n48 = med(rs, "nodes", strategy=s, pos="start", depth=5, threads=48)
@@ -161,12 +182,12 @@ def table(rs, tt):
             t = st.median([a for a, _ in x]); n = st.median([c for _, c in x])
             print(f"  {s:22s} {(1 << b) * 16 / 1e6:8.2f} MB  {n / 1e6:6.2f} M nodes"
                   f"  {t:.3f} s  {n / t / 1e6:5.2f} M nodes/s")
-    section("wait threshold, 48 threads (H)")
+    section("split depth, 48 threads (H)")
     for p in ["position-midgame1", "position-endgame"]:
         for m in (2, 3, 4):
             t = st.median([t for k, v, ss, pp, t, n in hrows
                            if k == "YBWMIN" and v == m and ss == TOP and pp == p])
-            print(f"  {SHORT[p]} threshold {m}: {t:.3f} s")
+            print(f"  {SHORT[p]} split at remaining depth {m + 1} or more: {t:.3f} s")
 
 
 def counters():
@@ -194,8 +215,9 @@ def counters():
 
 def main():
     rs = rows(F)
+    oracle()
     alpha_beta_vs_minimax()
-    first_move_cutoffs(rs, extra(F, "CUTOFFAT"))
+    first_move_cutoffs(extra(F, "CUTOFFAT"))
     ladder(rs)
     imbalance(rs)
     root_bound()

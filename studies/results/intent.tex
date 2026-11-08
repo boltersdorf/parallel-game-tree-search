@@ -1,0 +1,16 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{@{}llrrr@{}}
+\toprule
+Optimization & Counter testing the intent & Before & After & Net \\
+\midrule
+transposition table & node visits [$10^6$] & 19.41 & 12.64 & 1.6$\times$ \\
+iterative deepening & cutoffs on first move [\%] & 68.9 & 85.7 & 2.5$\times$ \\
+aspiration window & node visits [$10^6$] & 3.92 & 1.54 & 2.7$\times$ \\
+move ordering & cutoffs on first move [\%] & 53.8 & 96.9 & 27.9$\times$ \\
+young brothers wait & busiest over average thread & 5.5 & 1.0 & 81.8$\times$ \\
+\bottomrule
+\end{tabular}
+\end{table}

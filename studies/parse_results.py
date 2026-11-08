@@ -1,8 +1,8 @@
 """shared parser for the session .out files. every figure and table reads
 through this one loader so a format change breaks loudly in one place.
 
-!!! per thread fields come in two formats, interior:leaf:secs from the first
-campaign and interior:leaf:ttcut:secs after the histogram fix, both parse"""
+!!! per thread fields come in two formats, older logs carry interior:leaf:secs,
+newer ones interior:leaf:ttcut:secs, both parse"""
 
 import statistics as st
 from collections import defaultdict

@@ -35,16 +35,16 @@ struct alignas(64) TTSlotStat
 }
 
 
-class AbParTTNew: public SearchStrategy
+class AbParTT: public SearchStrategy
 {
  public:
 #ifdef TT_DEPTH_EQ
-    AbParTTNew(): SearchStrategy("AB Par TT EqDepth", 5) {}
+    AbParTT(): SearchStrategy("AB Par TT EqDepth", 5) {}
 #else
-    AbParTTNew(): SearchStrategy("AB Par TT", 5) {}
+    AbParTT(): SearchStrategy("AB Par TT", 5) {}
 #endif
 
-    SearchStrategy* clone() { return new AbParTTNew(); }
+    SearchStrategy* clone() { return new AbParTT(); }
 
  private:
     void searchBestMove();
@@ -64,7 +64,7 @@ class AbParTTNew: public SearchStrategy
     std::vector<int> _lo;
 };
 
-AbParTTNew abParTTNew;
+AbParTT abParTT;
 
 
 // !!! take this before playMove, actColor flips there
@@ -74,7 +74,7 @@ static inline uint64_t childKey(uint64_t key, const Board& board, const Move& m)
 }
 
 
-int AbParTTNew::abTT(Board& board, Evaluator& ev, int depth, int alpha, int beta,
+int AbParTT::abTT(Board& board, Evaluator& ev, int depth, int alpha, int beta,
                      uint64_t key, TTSlotStat& st)
 {
     if (!depth) { st.leaf++; return -ev.calcEvaluation(&board); }
@@ -166,7 +166,7 @@ int AbParTTNew::abTT(Board& board, Evaluator& ev, int depth, int alpha, int beta
 }
 
 
-void AbParTTNew::rootSplit(Board& root, std::vector<Move>& moves,
+void AbParTT::rootSplit(Board& root, std::vector<Move>& moves,
                            std::vector<int>& scores, std::vector<long>* rootNodes,
                            int depth, uint64_t rootKey, int rootColor,
                            std::vector<TTSlotStat>& stats)
@@ -216,7 +216,7 @@ void AbParTTNew::rootSplit(Board& root, std::vector<Move>& moves,
 
 
 
-void AbParTTNew::searchBestMove()
+void AbParTT::searchBestMove()
 {
     if (!_ev->evalScheme()) _ev->setEvalScheme();
 

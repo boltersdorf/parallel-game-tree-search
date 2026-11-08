@@ -41,7 +41,7 @@ GROUP_LIST="${GROUP_LIST:-MEM L3 BRANCH}"
 
 # no table, then the table alone, the same search otherwise
 # !!! underscores, not spaces, likwid re-quotes an argument with a space and
-# abtest then never matches the name, every run of the first attempt failed
+# abtest then never matches the name
 STRATS="AB_Parallel|AB_Par_TT"
 
 # 48 threads over both sockets is the working point, 24 fills one socket only
@@ -124,9 +124,8 @@ for pol in "default" "--interleave=all" "--membind=1"; do
   budget_left "NUMA $pol" || break
   echo "----- memory policy: $pol"
   if [ "$pol" = "default" ]; then NC=""; else NC="numactl $pol"; fi
-  # !!! OMP_NUM_THREADS has to be set here too, the site default is 1 and the
-  # first version of this block inherited it, so the control silently ran on one
-  # thread while the runs it was meant to control ran on 48
+  # !!! OMP_NUM_THREADS has to be set here too, the site default is 1, and the
+  # control has to run on as many threads as the runs it controls
   out=$(OMP_NUM_THREADS=48 $NC likwid-perfctr -C "S0:0-23@S1:0-23" -g MEM \
           "$BIN/abtest" AB_Par_TT "$POS" "$DEPTH" 1 2>&1)
   echo "$out" | grep -vE '^ROOTNODES|^CUTOFFAT'

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-T8: one row per optimization, its intent, the counter which tests that intent
+one row per optimization, its intent, the counter which tests that intent
 measured on the version before and after adding it, and the net wall time
 against AB Parallel.
 
@@ -103,18 +103,6 @@ def main():
 
     tex = [r"\begin{table}[htbp]", r"\centering", r"\footnotesize",
            r"\setlength{\tabcolsep}{5pt}",
-           r"\caption{Each optimization with the counter which tests its "
-           r"intent. The counter is measured on the two versions which differ "
-           r"in exactly that one optimization. Every row is therefore a "
-           r"controlled comparison. Midgame position 1, fixed depth 5, 48 "
-           r"threads, medians of five repetitions. The counter differs per row "
-           r"because each optimization predicts a different quantity. Node "
-           r"visits are defined in Table \ref{tab:abladder}. The imbalance of "
-           r"the last row is the busiest thread divided by the average over "
-           r"all 48. Net is the wall time of the After version against the "
-           r"parallel $\alpha\beta$ carrying none of these optimizations at "
-           r"the same thread count, cumulative down the table.}",
-           r"\label{tab:abintent}",
            r"\begin{tabular}{@{}llrrr@{}}", r"\toprule",
            r"Optimization & Counter testing the intent & Before & After & "
            r"Net \\",
@@ -123,7 +111,7 @@ def main():
         tex.append(f"{name} & {counter} & {b} & {a_} & {n:.1f}$\\times$ \\\\")
     tex += [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
 
-    out = AN / "results/T8_intent.tex"
+    out = AN / "results/intent.tex"
     out.write_text("\n".join(tex) + "\n")
     print(f"\nLaTeX: {out.relative_to(AN)}")
 

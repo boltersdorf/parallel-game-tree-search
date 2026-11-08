@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-F8: what the optimizations are worth against the unoptimized parallel search,
+what the optimizations are worth against root splitting,
 over the whole thread range.
 
 !!! the reference is AB Parallel at the same thread count, the baseline every
@@ -28,8 +28,8 @@ COLS = [("start", "start position"),
         ("position-midgame1", "midgame position 1"),
         ("position-midgame2", "midgame position 2"),
         ("position-endgame", "endgame position")]
-# O4 is the four sequential-side optimizations, defined in the caption, so the
-# legend stays short. YBWC is Feldmann's own abbreviation for the wait concept
+# TT+ID+AW+MO is the four optimizations which shrink the tree, YBWC is
+# Feldmann's abbreviation for the young brothers wait concept
 CURVES = [("AB Par TT ID Asp Ord YBW", "TT+ID+AW+MO + YBWC",
            "#CC79A7", "D", "-"),
           ("AB Par TT ID Asp Ord", "TT+ID+AW+MO",
@@ -82,15 +82,15 @@ def main():
         ax.set_title(plab, fontsize=8, pad=4)
         for sp in ("top", "right"):
             ax.spines[sp].set_visible(False)
-    axes[0][0].set_ylabel(r"speedup over parallel $\alpha\beta$")
+    axes[0][0].set_ylabel("factor over root splitting")
 
     fig.tight_layout(pad=0.4, rect=[0, 0.16, 1, 1])
     handles, labels = axes[0][0].get_legend_handles_labels()
     fig.legend(handles, labels, loc="lower center", ncol=3, frameon=False,
                handlelength=2.4, columnspacing=1.6, bbox_to_anchor=(0.5, 0.0))
-    fig.savefig(FIG / "F8.png", bbox_inches="tight")
+    fig.savefig(FIG / "factor_vs_threads.png", bbox_inches="tight")
     plt.close(fig)
-    print("written: figures/F8.png")
+    print("written: figures/factor_vs_threads.png")
 
     print(f"\n{'version':27s}{'position':14s}" + "".join(f"{t:>8d}" for t in THREADS))
     for strat, lab, _, _, _ in CURVES:
@@ -104,26 +104,6 @@ def main():
                     line += f"{'-':>8s}"
             print(line)
 
-    print(
-        "\nFig. 8. Speedup of the optimized versions over the parallel "
-        "alpha-beta at the same thread count, depth 5, log-log, identical axes "
-        "in all panels. O4 denotes the four optimizations which act on the "
-        "search itself, transposition table + iterative deepening + aspiration "
-        "window + move ordering, and YBWC is the Young Brothers Wait Concept "
-        "which splits the tree below the root. The reference is AB Parallel, "
-        "the parallel alpha-beta without any of them, drawn as the horizontal "
-        "line at one, so a curve reads directly as the factor the "
-        "optimizations buy. The "
-        "factor of O4 without the wait concept falls with thread "
-        "count, because the optimizations remove the very node visits which "
-        "root splitting would otherwise have distributed over the threads, so "
-        "the two compete for the same headroom; the versions with the wait "
-        "concept hold or extend their factor, up to 224x on the start "
-        "position, because splitting below the root restores the parallelism "
-        "the optimizations took. Points are medians of three repetitions. Xeon "
-        "Platinum 8174, 48 physical cores, one thread per core, "
-        "OMP_PLACES=cores, OMP_PROC_BIND=close."
-    )
 
 
 if __name__ == "__main__":

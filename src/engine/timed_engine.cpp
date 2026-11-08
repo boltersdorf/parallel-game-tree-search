@@ -62,12 +62,12 @@ const BookEntry g_book[] = {
 
 static std::atomic<int> g_history[Board::AllFields][8];
 
-class AbParTournament: public SearchStrategy
+class AbParTimed: public SearchStrategy
 {
  public:
-    AbParTournament(): SearchStrategy("AB Par TT ID Asp Ord YBW Clock", 1) {}
+    AbParTimed(): SearchStrategy("AB Par TT ID Asp Ord YBW Clock", 1) {}
 
-    SearchStrategy* clone() { return new AbParTournament(); }
+    SearchStrategy* clone() { return new AbParTimed(); }
 
  private:
     void searchBestMove();
@@ -93,12 +93,12 @@ class AbParTournament: public SearchStrategy
     std::chrono::steady_clock::time_point _deadline;
 };
 
-AbParTournament abParTournament;
+AbParTimed abParTimed;
 
 
 // reading the clock at every node costs more than a node, so look every
 // NODE_CHECK nodes and tell the other threads through the flag
-bool AbParTournament::outOfTime(ThreadSlot& st)
+bool AbParTimed::outOfTime(ThreadSlot& st)
 {
     if (_abort.load(std::memory_order_relaxed)) return true;
     if (!_timed) return false;
@@ -112,7 +112,7 @@ bool AbParTournament::outOfTime(ThreadSlot& st)
 }
 
 
-int AbParTournament::abTT(Board& board, Evaluator& ev, int depth, int alpha, int beta,
+int AbParTimed::abTT(Board& board, Evaluator& ev, int depth, int alpha, int beta,
                     uint64_t key, ThreadSlot& st, Move* outBest)
 {
     if (!depth) return -ev.calcEvaluation(&board);
@@ -282,7 +282,7 @@ int AbParTournament::abTT(Board& board, Evaluator& ev, int depth, int alpha, int
 }
 
 
-int AbParTournament::computeBudgetMs()
+int AbParTimed::computeBudgetMs()
 {
     int me = _board->msecsToPlay(_board->actColor());
     int other = _board->msecsToPlay(_board->actColor() == Board::color1
@@ -308,7 +308,7 @@ int AbParTournament::computeBudgetMs()
 }
 
 
-bool AbParTournament::bookMove(Move& out)
+bool AbParTimed::bookMove(Move& out)
 {
     if (!_bookAlive) return false;
 
@@ -333,7 +333,7 @@ bool AbParTournament::bookMove(Move& out)
 }
 
 
-int AbParTournament::iterate(int depth, uint64_t rootKey, int alpha, int beta)
+int AbParTimed::iterate(int depth, uint64_t rootKey, int alpha, int beta)
 {
     // killers by distance from this root, _maxDepth is 40 when no depth is given
     _rootDepth = depth;
@@ -357,7 +357,7 @@ int AbParTournament::iterate(int depth, uint64_t rootKey, int alpha, int beta)
 }
 
 
-void AbParTournament::searchBestMove()
+void AbParTimed::searchBestMove()
 {
     if (!_ev->evalScheme()) _ev->setEvalScheme();
 

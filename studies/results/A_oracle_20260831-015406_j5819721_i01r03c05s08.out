@@ -3,7 +3,7 @@ results: ~/abalone/versions/4-ab-par/analysis/results/A_oracle_20260831-015406_j
 
 
 
-=== A4 the optimization ladder against the same oracle
+=== A4 the 2.3 ladder against the same oracle
 PASS AB Par Ord start d3 t1 value 66 (3 repeats)
 PASS AB Par Ord start d3 t8 value 66 (3 repeats)
 PASS AB Par Ord start d3 t24 value 66 (3 repeats)
